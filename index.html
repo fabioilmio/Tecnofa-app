@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="TECNOFA - gestione tecnica, clienti, impianti, interventi, percorsi ed energia.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <title>TECNOFA</title>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-mark">T</div><div><strong>TECNOFA</strong><span>Technical OS</span></div></div>
+    <nav id="main-nav">
+      <a href="#/home" data-route="home">⌂ <span>Dashboard</span></a>
+      <a href="#/agenda" data-route="agenda">◷ <span>Agenda</span></a>
+      <a href="#/clienti" data-route="clienti">♙ <span>Clienti</span></a>
+      <a href="#/impianti" data-route="impianti">▦ <span>Impianti</span></a>
+      <a href="#/interventi" data-route="interventi">⚒ <span>Interventi</span></a>
+      <a href="#/manutenzioni" data-route="manutenzioni">↻ <span>Manutenzioni</span></a>
+      <a href="#/preventivi" data-route="preventivi">▤ <span>Preventivi</span></a>
+      <a href="#/magazzino" data-route="magazzino">□ <span>Magazzino</span></a>
+      <a href="#/economia" data-route="economia">€ <span>Economia</span></a>
+      <a href="#/documenti" data-route="documenti">▧ <span>Documenti</span></a>
+      <a href="#/mappa" data-route="mappa">⌖ <span>Mappa & percorsi</span></a>
+      <a href="#/energia" data-route="energia">⚡ <span>Energia</span></a>
+      <a href="#/ai" data-route="ai">✦ <span>TECNOFA AI</span></a>
+      <a href="#/impostazioni" data-route="impostazioni">⚙ <span>Impostazioni</span></a>
+    </nav>
+    <div class="sidebar-footer">V1 • struttura modulare</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn mobile-only" id="menu-btn">☰</button>
+      <div><div class="eyebrow" id="page-eyebrow">TECNOFA</div><h1 id="page-title">Dashboard</h1></div>
+      <div class="top-actions"><button class="ghost-btn" id="quick-add">＋ Nuovo</button><button class="avatar">F</button></div>
+    </header>
+    <section id="view" class="view"></section>
+  </main>
+</div>
+
+<div id="modal" class="modal hidden"><div class="modal-card"><button class="modal-close" id="modal-close">×</button><div id="modal-content"></div></div></div>
+<div id="toast" class="toast"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
