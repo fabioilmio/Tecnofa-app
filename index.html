@@ -3,18 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0b1220">
+  <meta name="theme-color" content="#1a232c">
   <meta name="description" content="TECNOFA - gestione tecnica, clienti, impianti, interventi, percorsi ed energia.">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-  <title>TECNOFA</title>
+  <title>TECNOFA | Technical OS</title>
 </head>
 <body>
 <div class="app-shell">
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><div class="brand-mark">T</div><div><strong>TECNOFA</strong><span>Technical OS</span></div></div>
+    <div class="brand">
+      <div class="brand-logo" aria-label="TECNOFA">
+        <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
+          <path d="M9 29 32 11l23 18" fill="none" stroke="#63ad3d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 28v25h30V28" fill="none" stroke="#f4f7f6" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M25 53V37h14v16" fill="none" stroke="#63ad3d" stroke-width="3"/>
+        </svg>
+      </div>
+      <div><strong>TECNOFA</strong><span>Technical OS</span></div>
+    </div>
     <nav id="main-nav">
       <a href="#/home" data-route="home">⌂ <span>Dashboard</span></a>
       <a href="#/agenda" data-route="agenda">◷ <span>Agenda</span></a>
@@ -31,7 +40,7 @@
       <a href="#/ai" data-route="ai">✦ <span>TECNOFA AI</span></a>
       <a href="#/impostazioni" data-route="impostazioni">⚙ <span>Impostazioni</span></a>
     </nav>
-    <div class="sidebar-footer">V1 • struttura modulare</div>
+    <div class="sidebar-footer">TECNOFA • Technical OS</div>
   </aside>
 
   <main class="main">
