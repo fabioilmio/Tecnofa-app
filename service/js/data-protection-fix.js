@@ -1,11 +1,10 @@
 /* TECNOFA Gestionale — data protection compatibility layer */
 (function(){
   'use strict';
-  const DB='tecnofa-durability-v1',MEDIA='media';
+  const DB='tecnofa-durability-v1',MEDIA='media',DRIVE_INTERVAL=15*60*1000;
   let dbp;
   const db=()=>dbp||(dbp=new Promise((resolve,reject)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('kv'))r.result.createObjectStore('kv',{keyPath:'key'});if(!r.result.objectStoreNames.contains('media'))r.result.createObjectStore('media',{keyPath:'id'});if(!r.result.objectStoreNames.contains('meta'))r.result.createObjectStore('meta',{keyPath:'key'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)}));
   const put=v=>db().then(d=>new Promise((res,rej)=>{const r=d.transaction(MEDIA,'readwrite').objectStore(MEDIA).put(v);r.onsuccess=()=>res(v);r.onerror=()=>rej(r.error)}));
-  const all=()=>db().then(d=>new Promise((res,rej)=>{const r=d.transaction(MEDIA).objectStore(MEDIA).getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error)}));
   const uid=()=>crypto.randomUUID?crypto.randomUUID():`m-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const interventions=()=>{try{const v=JSON.parse(localStorage.getItem('tf_interventions')||'[]');return Array.isArray(v)?v:[]}catch{return[]}};
   const saveInterventions=v=>localStorage.setItem('tf_interventions',JSON.stringify(v));
@@ -24,16 +23,16 @@
   }
   function bind(){document.querySelectorAll('#d-photos').forEach(x=>{if(x.dataset.tfPhotoFix==='1')return;x.dataset.tfPhotoFix='1';x.addEventListener('change',()=>onPhotos(x))})}
   function repairPhotoImages(){
-    const list=interventions(),selected=window.state?.selected;
-    let j=list.find(x=>String(x.id)===String(selected));
-    if(!j){const btn=document.querySelector('[onclick*="saveIntervention"]');const id=btn?.getAttribute('onclick')?.match(/saveIntervention\('([^']+)'/)?.[1];j=list.find(x=>String(x.id)===String(id))}
+    const list=interventions();let id=document.querySelector('[onclick*="saveIntervention"]')?.getAttribute('onclick')?.match(/saveIntervention\('([^']+)'/)?.[1];const j=list.find(x=>String(x.id)===String(id));
     if(!j)return;document.querySelectorAll('#photo-grid img').forEach((img,i)=>{const p=j.photos?.[i];if(p&&typeof p==='object'&&p.src)img.src=p.src})
   }
   function patchRender(){const fn=window.render;if(typeof fn!=='function'||fn.__tfPhotoFix)return;const w=function(...a){const r=fn.apply(this,a);setTimeout(()=>{bind();repairPhotoImages()},0);return r};w.__tfPhotoFix=true;window.render=w}
   function patchBackup(){
-    if(typeof window.tfExportBackupSafe==='function'&&!window.tfExportBackupSafe.__tfCompat){window.tfExportBackup=window.tfExportBackupSafe;window.tfExportBackup.__tfCompat=true}
-    if(typeof window.tfImportBackupSafe==='function'&&!window.tfImportBackupSafe.__tfCompat){window.tfImportBackup=window.tfImportBackupSafe;window.tfImportBackup.__tfCompat=true}
+    if(typeof window.tfExportBackupSafe==='function'&&window.tfExportBackup!==window.tfExportBackupSafe)window.tfExportBackup=window.tfExportBackupSafe;
+    if(typeof window.tfImportBackupSafe==='function'&&window.tfImportBackup!==window.tfImportBackupSafe)window.tfImportBackup=window.tfImportBackupSafe;
+    const b=[...document.querySelectorAll('.tf-backup-card button')].find(x=>/Esporta backup/i.test(x.textContent));if(b)b.textContent='↓ Esporta Database';
   }
-  function init(){bind();repairPhotoImages();patchRender();patchBackup();const mo=new MutationObserver(()=>{bind();repairPhotoImages();patchRender();patchBackup()});mo.observe(document.body,{childList:true,subtree:true})}
+  function driveLoop(){if(localStorage.getItem('tf_drive_auto')==='1'&&typeof window.tfDriveSync==='function')window.tfDriveSync();}
+  function init(){bind();repairPhotoImages();patchRender();patchBackup();setInterval(()=>{patchBackup();if(localStorage.getItem('tf_drive_auto')==='1')driveLoop()},DRIVE_INTERVAL);const mo=new MutationObserver(()=>{bind();repairPhotoImages();patchRender();patchBackup()});mo.observe(document.body,{childList:true,subtree:true})}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
