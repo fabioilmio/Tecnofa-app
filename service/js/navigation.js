@@ -1,12 +1,7 @@
 /* TECNOFA Gestionale — navigazione principale senza doppioni */
 (function(){
-  // La UI cliente avanzata viene caricata qui per evitare che la scheda resti non raggiungibile.
-  if(!document.querySelector('script[data-tecnofa-client-ui]')){
-    const s=document.createElement('script');
-    s.src='js/client_ui.js?v=20261011-24';
-    s.dataset.tecnofaClientUi='1';
-    document.head.appendChild(s);
-  }
+  // client_ui.js viene caricato una sola volta da index.html.
+  // Non aggiungere dinamicamente una seconda copia: la vecchia v24 sovrascriveva openClient della v25.
   titles.technicians='Tecnici';
   titles.archivi='Archivi';
   titles.administration='Amministrazione';
