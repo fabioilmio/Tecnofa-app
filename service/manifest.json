@@ -1,0 +1,11 @@
+{
+  "name": "TECNOFA Service",
+  "short_name": "TECNOFA Service",
+  "description": "Gestione tecnica di clienti, impianti e interventi.",
+  "lang": "it-IT",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f6f8f6",
+  "theme_color": "#17352d",
+  "icons": []
+}
