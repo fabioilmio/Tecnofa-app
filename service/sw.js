@@ -1,4 +1,4 @@
-const CACHE='tecnofa-gestionale-v18';
+const CACHE='tecnofa-gestionale-v19';
 const ASSETS=['./','./index.html','./css/style.css','./css/agenda.css','./css/warehouse.css','./css/archivi.css','./css/admin.css','./css/auth.css','./js/app.js','./js/agenda.js','./js/navigation.js','./js/warehouse.js','./js/archivi.js','./js/clienti.js','./js/admin.js','./js/admin_tables.js','./js/pdf.js','./js/pdf_reports.js','./js/admin_pdf_config.js','./js/admin_relations.js','./js/calendar_overrides.js','./js/auth.js','./manifest.json'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('tecnofa-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
