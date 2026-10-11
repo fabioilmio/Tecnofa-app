@@ -1,0 +1,20 @@
+/* TECNOFA Gestionale — Ricerca clienti */
+.tf-global-search-btn{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 11px;border:1px solid var(--border);border-radius:11px;background:var(--surface,#fff);color:var(--text);font-weight:700;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.tf-global-search-btn:hover{border-color:var(--accent,#4c8c72);background:#f5faf7}
+.tf-global-search-btn span:first-child{font-size:20px;line-height:1}
+.tf-global-search-label{font-size:13px}
+.tf-global-search-modal{width:min(760px,calc(100vw - 28px));max-height:min(720px,calc(100vh - 28px));overflow:hidden;padding:0}
+.tf-search-head{display:flex;justify-content:space-between;gap:18px;padding:22px 24px 14px;border-bottom:1px solid var(--border)}
+.tf-search-head h2{margin:3px 0 5px}.tf-search-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.tf-search-input-wrap{display:flex;align-items:center;gap:10px;margin:16px 24px 10px;padding:0 12px;border:1px solid #cfd9d4;border-radius:13px;background:#fbfdfc;box-shadow:0 2px 10px rgba(23,53,45,.04)}
+.tf-search-input-wrap:focus-within{border-color:var(--accent,#4c8c72);box-shadow:0 0 0 3px rgba(76,140,114,.11)}
+.tf-search-input-wrap>span{font-size:22px;color:var(--muted)}
+.tf-search-input-wrap input{width:100%;height:48px;border:0;outline:0;background:transparent;font-size:15px;color:var(--text)}
+.tf-search-input-wrap kbd{font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:3px 6px;background:#fff;white-space:nowrap}
+.tf-client-results{padding:4px 12px 18px;overflow:auto;max-height:500px}
+.tf-client-result{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px;border:0;border-bottom:1px solid #edf1ef;background:transparent;text-align:left;cursor:pointer;border-radius:9px}
+.tf-client-result:hover{background:#f2f8f5}.tf-client-result-main{display:flex;flex-direction:column;min-width:0}.tf-client-result-main strong{font-size:14px}.tf-client-result-main small{margin-top:3px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tf-client-result-meta{font-size:11px;color:var(--muted);white-space:nowrap}
+.tf-search-hint,.tf-search-empty{padding:28px 14px;text-align:center;color:var(--muted);font-size:13px}
+.tf-inline-client-search{position:relative;margin-bottom:8px}.tf-inline-search-wrap{display:flex;align-items:center;gap:7px;border:1px solid #cfd9d4;border-radius:10px;background:#fff;padding:0 8px}.tf-inline-search-wrap:focus-within{border-color:var(--accent,#4c8c72);box-shadow:0 0 0 3px rgba(76,140,114,.08)}.tf-inline-search-wrap>span{color:var(--muted);font-size:18px}.tf-inline-search-wrap input{height:40px;flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:14px}.tf-inline-clear{border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;padding:4px}
+.tf-inline-results{margin-top:5px;max-height:190px;overflow:auto;border-radius:9px}.tf-inline-result{width:100%;display:flex;flex-direction:column;align-items:flex-start;padding:9px 10px;border:0;border-bottom:1px solid #edf1ef;background:#f9fbfa;text-align:left;cursor:pointer}.tf-inline-result:hover{background:#eef7f2}.tf-inline-result strong{font-size:13px}.tf-inline-result small{font-size:11px;color:var(--muted);margin-top:2px}.tf-inline-empty,.tf-inline-selected{padding:9px 10px;font-size:12px;color:var(--muted);background:#f6f9f7;border-radius:8px}.tf-inline-selected{color:var(--text)}
+@media (max-width:700px){.tf-global-search-label{display:none}.tf-global-search-btn{width:38px;padding:0;justify-content:center}.tf-global-search-modal{width:calc(100vw - 16px);max-height:calc(100vh - 16px);border-radius:16px}.tf-search-head{padding:18px 16px 12px}.tf-search-input-wrap{margin:12px 16px 8px}.tf-client-results{padding:4px 8px 12px;max-height:calc(100vh - 230px)}.tf-client-result{padding:11px 9px}.tf-client-result-meta{display:none}}
