@@ -17,9 +17,21 @@
   function reorganizeSidebar(){
     const nav=document.getElementById('main-nav');if(!nav)return;
     const get=id=>nav.querySelector(`[data-view="${id}"]`);
-    const labels=[['Principale',['dashboard','agenda','interventions']],['Anagrafiche',['clients','plants','technicians']],['Operatività',['warehouse','reports']],['Azienda',['administration','archivi']]];
+    const groups=[
+      ['Principale',['dashboard','agenda','interventions'],true],
+      ['Anagrafiche',['clients','plants','technicians'],false],
+      ['Operatività',['warehouse','reports'],false],
+      ['Azienda',['administration','archivi'],false]
+    ];
     const nodes=[];
-    labels.forEach(([label,ids])=>{const h=document.createElement('div');h.className='nav-section';h.textContent=label;nodes.push(h);ids.forEach(id=>{const b=get(id);if(b)nodes.push(b);});});
+    groups.forEach(([label,ids,open])=>{
+      const section=document.createElement('div');section.className='tf-nav-group';
+      const toggle=document.createElement('button');toggle.type='button';toggle.className='tf-nav-group-toggle';toggle.setAttribute('aria-expanded',String(open));toggle.innerHTML=`<span>${label}</span><b>⌄</b>`;
+      const list=document.createElement('div');list.className='tf-nav-group-items';if(!open)list.hidden=true;
+      ids.forEach(id=>{const b=get(id);if(b)list.appendChild(b)});
+      toggle.onclick=()=>{const next=list.hidden;list.hidden=!next;toggle.setAttribute('aria-expanded',String(next));};
+      section.appendChild(toggle);section.appendChild(list);nodes.push(section);
+    });
     nav.querySelectorAll('.nav-item[data-view="users"]').forEach(x=>x.remove());nav.innerHTML='';nodes.forEach(n=>nav.appendChild(n));
   }
   function connectDashboard(){
@@ -32,9 +44,6 @@
     }
     if(state.view==='dashboard')window.render();
   }
-  function loadDashboard(){
-    if(window.tfDashboardPage){connectDashboard();return;}
-    const s=document.createElement('script');s.src='js/dashboard.js?v=20261011-23';s.onload=connectDashboard;document.body.appendChild(s);
-  }
-  setTimeout(()=>{reorganizeSidebar();loadDashboard();},0);
+  function loadDashboard(){if(window.tfDashboardPage){connectDashboard();return}const s=document.createElement('script');s.src='js/dashboard.js?v=20261011-24';s.onload=connectDashboard;document.body.appendChild(s)}
+  setTimeout(()=>{reorganizeSidebar();loadDashboard()},0);
 })();
