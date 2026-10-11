@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#17352d">
   <meta name="description" content="TECNOFA Gestionale — gestione tecnica di clienti, impianti e interventi.">
-  <link rel="manifest" href="manifest.json?v=20261011-2">
-  <link rel="stylesheet" href="css/style.css?v=20261011-2">
-  <link rel="stylesheet" href="css/agenda.css?v=20261011-2">
+  <link rel="manifest" href="manifest.json?v=20261011-3">
+  <link rel="stylesheet" href="css/style.css?v=20261011-3">
+  <link rel="stylesheet" href="css/agenda.css?v=20261011-3">
   <title>TECNOFA Gestionale</title>
 </head>
 <body>
@@ -32,7 +32,6 @@
         <button class="nav-item" data-view="settings"><span>⚙</span> Impostazioni</button>
       </div>
     </aside>
-
     <main class="main">
       <header class="topbar">
         <button id="mobile-menu" class="icon-btn" aria-label="Apri menu">☰</button>
@@ -43,8 +42,8 @@
     </main>
   </div>
   <div id="toast" class="toast" role="status"></div>
-  <script src="js/app.js?v=20261011-2"></script>
-  <script src="js/agenda.js?v=20261011-2"></script>
+  <script src="js/app.js?v=20261011-3"></script>
+  <script src="js/agenda.js?v=20261011-3"></script>
   <script>
     /* TECNOFA — anagrafica tecnici del pilot */
     state.technicians=(()=>{try{const v=JSON.parse(localStorage.getItem('tf_technicians'));return Array.isArray(v)&&v.length?v:['Fabio','Tecnico 01','Tecnico 02']}catch(e){return ['Fabio','Tecnico 01','Tecnico 02']}})();
