@@ -1,63 +1,65 @@
-/* TECNOFA Gestionale — scheda cliente: modifica, elimina e Google Maps */
+/* TECNOFA Gestionale — clienti: anagrafica, numerazione, filtri, allegati e Maps */
 (function(){
-  function mapsQuery(c){ return [c.address,c.city,c.cap,c.province].filter(Boolean).join(', '); }
+  const CLIENT_PREFIX='CLI-';
+  function mapsQuery(c){ return [c.address,c.frazione,c.city,c.cap,c.province].filter(Boolean).join(', '); }
   function mapsUrl(c){ return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(mapsQuery(c)); }
   function directionsUrl(c){ return 'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(mapsQuery(c)); }
   function nextClientId(){ return state.clients.reduce((m,c)=>Math.max(m,Number(c.id)||0),0)+1; }
+  function nextClientCode(){ return CLIENT_PREFIX+String(state.clients.reduce((m,c)=>Math.max(m,parseInt(String(c.code||'').replace(/\D/g,''))||0),0)+1).padStart(5,'0'); }
+  function ensureClientCodes(){ let changed=false; state.clients.forEach(c=>{if(!c.code){c.code=CLIENT_PREFIX+String(Number(c.id)||1).padStart(5,'0');changed=true;} if(!Array.isArray(c.attachments)){c.attachments=[];changed=true;} if(!c.frazione){c.frazione='';}}); if(changed)save(); }
+  function escLocal(s=''){return typeof esc==='function'?esc(s):String(s).replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
   function clientForm(c){
+    const code=c?.code||nextClientCode();
     return `<div class="modal-backdrop tf-client-modal"><div class="modal modal-large">
-      <div class="detail-head"><div><div class="eyebrow">${c?'Modifica cliente':'Nuovo cliente'}</div><h2>${c?'Modifica anagrafica':'Nuovo cliente'}</h2><p>Dati utilizzati anche per le indicazioni stradali.</p></div><button class="icon-btn tf-client-close" aria-label="Chiudi">×</button></div>
+      <div class="detail-head"><div><div class="eyebrow">${c?'Modifica cliente':'Nuovo cliente'}</div><h2>${c?'Modifica anagrafica':'Nuovo cliente'}</h2><p>Codice cliente <strong>${escLocal(code)}</strong> · dati utilizzati anche per Maps e storico.</p></div><button class="icon-btn tf-client-close" aria-label="Chiudi">×</button></div>
       <div class="form-grid">
-        <div class="field full"><label>Nome / Ragione sociale</label><input id="cf-name" value="${esc(c?.name||'')}" required></div>
-        <div class="field"><label>Telefono</label><input id="cf-phone" value="${esc(c?.phone||'')}" type="tel"></div>
-        <div class="field"><label>Città</label><input id="cf-city" value="${esc(c?.city||'')}" required></div>
-        <div class="field"><label>Indirizzo</label><input id="cf-address" value="${esc(c?.address||'')}" placeholder="Via, numero civico"></div>
-        <div class="field"><label>CAP</label><input id="cf-cap" value="${esc(c?.cap||'')}" inputmode="numeric"></div>
-        <div class="field"><label>Provincia</label><input id="cf-province" value="${esc(c?.province||'')}" maxlength="2" placeholder="TV"></div>
-        <div class="field full"><label>Impianto principale</label><input id="cf-plant" value="${esc(c?.plant||'')}" placeholder="Es. Pompa di calore Daikin"></div>
+        <div class="field"><label>Numero cliente</label><input id="cf-code" value="${escLocal(code)}" readonly></div>
+        <div class="field"><label>Nome / Ragione sociale</label><input id="cf-name" value="${escLocal(c?.name||'')}" required></div>
+        <div class="field"><label>Telefono</label><input id="cf-phone" value="${escLocal(c?.phone||'')}" type="tel"></div>
+        <div class="field"><label>Città / Comune</label><input id="cf-city" value="${escLocal(c?.city||'')}" required></div>
+        <div class="field"><label>Frazione</label><input id="cf-frazione" value="${escLocal(c?.frazione||'')}" placeholder="Es. Semonzo, Crespano…"></div>
+        <div class="field"><label>Indirizzo</label><input id="cf-address" value="${escLocal(c?.address||'')}" placeholder="Via, numero civico"></div>
+        <div class="field"><label>CAP</label><input id="cf-cap" value="${escLocal(c?.cap||'')}" inputmode="numeric"></div>
+        <div class="field"><label>Provincia</label><input id="cf-province" value="${escLocal(c?.province||'')}" maxlength="2" placeholder="TV"></div>
+        <div class="field full"><label>Zona / area</label><input id="cf-zone" value="${escLocal(c?.zone||'')}" placeholder="Es. Pedemontana, Alto Trevigiano, Bassanese…"></div>
+        <div class="field full"><label>Impianto principale</label><input id="cf-plant" value="${escLocal(c?.plant||'')}" placeholder="Es. Pompa di calore Daikin"></div>
       </div>
+      <div class="panel section-gap tf-client-attach-box"><div class="panel-head"><h3>Allegati cliente</h3><span class="badge">${(c?.attachments||[]).length} file</span></div><p class="muted">Foto, PDF, documenti tecnici o altri file. Le immagini vengono ridotte automaticamente per il pilot.</p><input id="cf-files" type="file" multiple accept="image/*,application/pdf"><div id="cf-attachments">${attachmentList(c)}</div></div>
       <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:22px"><button class="ghost-btn tf-client-close">Annulla</button><button class="primary" id="cf-save">Salva cliente</button></div>
     </div></div>`;
   }
+  function attachmentList(c){const arr=c?.attachments||[];if(!arr.length)return '<div class="empty">Nessun allegato.</div>';return `<div class="tf-attachment-list">${arr.map((a,i)=>`<div class="tf-attachment"><span class="tf-attachment-icon">${a.type?.startsWith('image/')?'IMG':'PDF'}</span><div><strong>${escLocal(a.name)}</strong><small>${formatSize(a.size)}</small></div><div class="tf-attachment-actions"><button type="button" class="panel-link" onclick="tfPreviewClientAttachment('${c.id}',${i})">Visualizza</button><button type="button" class="panel-link danger" onclick="tfRemoveClientAttachment('${c.id}',${i})">Elimina</button></div></div>`).join('')}</div>`}
+  function formatSize(n){if(!n)return '';return n<1024?`${n} B`:n<1048576?`${(n/1024).toFixed(0)} KB`:`${(n/1048576).toFixed(1)} MB`;}
+  function resizeImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const max=1600,scale=Math.min(1,max/Math.max(img.width,img.height));const cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(img.width*scale));cv.height=Math.max(1,Math.round(img.height*scale));cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);resolve({name:file.name.replace(/\.[^.]+$/i,'')+'.jpg',type:'image/jpeg',size:0,data:cv.toDataURL('image/jpeg',0.78)});};img.onerror=reject;img.src=r.result;};r.onerror=reject;r.readAsDataURL(file);});}
+  function readFile(file){if(file.type.startsWith('image/'))return resizeImage(file);return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve({name:file.name,type:file.type||'application/octet-stream',size:file.size,data:r.result});r.onerror=reject;r.readAsDataURL(file);});}
+  async function collectFiles(modal,c){const input=modal.querySelector('#cf-files');if(!input?.files?.length)return true;const maxPdf=1024*1024;for(const file of [...input.files]){if(c.attachments.length>=8){toast('Massimo 8 allegati per cliente');break;}if(file.type==='application/pdf'&&file.size>maxPdf){toast(`PDF troppo grande: ${file.name} (max 1 MB)`);continue;}try{const a=await readFile(file);a.size=Math.round((a.data.length*3)/4);c.attachments.push({...a,addedAt:new Date().toISOString()});}catch{toast(`Impossibile allegare ${file.name}`);}}return true;}
   function bindClientForm(modal,existing){
     modal.querySelectorAll('.tf-client-close').forEach(b=>b.onclick=()=>modal.remove());
-    modal.querySelector('#cf-save').onclick=()=>{
+    modal.querySelector('#cf-save').onclick=async()=>{
       const name=modal.querySelector('#cf-name').value.trim(), city=modal.querySelector('#cf-city').value.trim();
-      if(!name||!city){toast('Nome e città sono obbligatori');return;}
-      const c=existing||{id:nextClientId()};
-      c.name=name;c.phone=modal.querySelector('#cf-phone').value.trim();c.city=city;c.address=modal.querySelector('#cf-address').value.trim();c.cap=modal.querySelector('#cf-cap').value.trim();c.province=modal.querySelector('#cf-province').value.trim().toUpperCase();c.plant=modal.querySelector('#cf-plant').value.trim();
-      if(!existing)state.clients.push(c);
-      state.interventions.forEach(j=>{if(String(j.clientId)===String(c.id))j.client=c.name});
-      save();modal.remove();toast(existing?'Cliente modificato':'Cliente aggiunto');render();
+      if(!name||!city){toast('Nome e comune sono obbligatori');return;}
+      const c=existing||{id:nextClientId(),code:nextClientCode(),attachments:[]};c.attachments=c.attachments||[];
+      c.code=modal.querySelector('#cf-code').value.trim()||c.code;c.name=name;c.phone=modal.querySelector('#cf-phone').value.trim();c.city=city;c.frazione=modal.querySelector('#cf-frazione').value.trim();c.address=modal.querySelector('#cf-address').value.trim();c.cap=modal.querySelector('#cf-cap').value.trim();c.province=modal.querySelector('#cf-province').value.trim().toUpperCase();c.zone=modal.querySelector('#cf-zone').value.trim();c.plant=modal.querySelector('#cf-plant').value.trim();
+      const btn=modal.querySelector('#cf-save');btn.disabled=true;btn.textContent='Salvataggio…';await collectFiles(modal,c);
+      if(!existing)state.clients.push(c);state.interventions.forEach(j=>{if(String(j.clientId)===String(c.id))j.client=c.name});save();modal.remove();toast(existing?'Cliente modificato':'Cliente aggiunto');render();
     };
   }
-  window.tfEditClient=function(id){
-    const c=state.clients.find(x=>String(x.id)===String(id));if(!c)return;
-    const host=document.createElement('div');host.innerHTML=clientForm(c);const modal=host.firstElementChild;document.body.appendChild(modal);bindClientForm(modal,c);
-  };
-  window.tfDeleteClient=function(id){
-    const c=state.clients.find(x=>String(x.id)===String(id));if(!c)return;
-    const jobs=state.interventions.filter(x=>String(x.clientId)===String(c.id));
-    if(jobs.length){toast('Cliente con interventi: meglio conservarlo nello storico');return;}
-    if(!confirm(`Eliminare il cliente "${c.name}"?\n\nL'operazione non può essere annullata.`))return;
-    state.clients=state.clients.filter(x=>String(x.id)!==String(id));save();toast('Cliente eliminato');render();
-  };
-  window.openClient=function(id){
-    const c=state.clients.find(x=>String(x.id)===String(id));if(!c)return;
-    const jobs=state.interventions.filter(x=>String(x.clientId)===String(c.id)), address=mapsQuery(c);
-    const wrap=document.createElement('div');wrap.className='modal-backdrop';
-    wrap.innerHTML=`<div class="modal modal-large"><div class="detail-head"><div><div class="eyebrow">Scheda cliente</div><h2>${esc(c.name)}</h2><p>${esc(address||'Indirizzo non inserito')}</p></div><button class="icon-btn modal-close" aria-label="Chiudi">×</button></div>
-      <div class="detail-grid"><div class="detail-card"><span>Telefono</span><strong>${esc(c.phone||'—')}</strong></div><div class="detail-card"><span>Impianto principale</span><strong>${esc(c.plant||'—')}</strong></div><div class="detail-card"><span>Indirizzo</span><strong>${esc(c.address||'—')}</strong></div><div class="detail-card"><span>Località</span><strong>${esc([c.cap,c.city,c.province].filter(Boolean).join(' ')||'—')}</strong></div></div>
-      <div style="display:flex;flex-wrap:wrap;gap:10px;margin:18px 0"><button class="primary" onclick="tfEditClient('${c.id}')">✏ Modifica</button><a class="ghost-btn" href="${mapsUrl(c)}" target="_blank" rel="noopener">🗺 Apri mappa</a><a class="ghost-btn" href="${directionsUrl(c)}" target="_blank" rel="noopener">🚗 Indicazioni stradali</a><button class="ghost-btn" onclick="tfDeleteClient('${c.id}')">Elimina</button></div>
-      <h3 class="section-title">Storico interventi</h3><div class="job-list">${jobs.map(jobRow).join('')||'<div class="empty">Nessun intervento.</div>'}</div></div>`;
-    document.body.appendChild(wrap);wrap.querySelector('.modal-close').onclick=()=>wrap.remove();
-  };
-  window.openClientModal=function(id){
-    const existing=id!=null?state.clients.find(x=>String(x.id)===String(id)):null;
-    const host=document.createElement('div');host.innerHTML=clientForm(existing);const modal=host.firstElementChild;document.body.appendChild(modal);bindClientForm(modal,existing);
-  };
-  window.clientTable=function(list){
-    if(!list.length)return '<div class="empty">Nessun cliente trovato.</div>';
-    return `<table class="table"><thead><tr><th>Cliente</th><th>Contatto</th><th>Località</th><th>Impianto</th><th>Azioni</th></tr></thead><tbody>${list.map(c=>`<tr><td><strong>${esc(c.name)}</strong></td><td>${esc(c.phone||'—')}</td><td>${esc([c.cap,c.city,c.province].filter(Boolean).join(' ')||'—')}</td><td><span class="badge">${esc(c.plant||'—')}</span></td><td style="white-space:nowrap"><button class="panel-link" onclick="openClient('${c.id}')">Apri</button> <button class="panel-link" onclick="tfEditClient('${c.id}')">Modifica</button></td></tr>`).join('')}</tbody></table>`;
-  };
+  window.tfEditClient=function(id){ensureClientCodes();const c=state.clients.find(x=>String(x.id)===String(id));if(!c)return;const host=document.createElement('div');host.innerHTML=clientForm(c);const modal=host.firstElementChild;document.body.appendChild(modal);bindClientForm(modal,c);};
+  window.openClientModal=function(id){ensureClientCodes();const existing=id!=null?state.clients.find(x=>String(x.id)===String(id)):null;const host=document.createElement('div');host.innerHTML=clientForm(existing);const modal=host.firstElementChild;document.body.appendChild(modal);bindClientForm(modal,existing);};
+  window.tfDeleteClient=function(id){const c=state.clients.find(x=>String(x.id)===String(id));if(!c)return;const jobs=state.interventions.filter(x=>String(x.clientId)===String(c.id));if(jobs.length){toast('Cliente con interventi: meglio conservarlo nello storico');return;}if(!confirm(`Eliminare il cliente "${c.name}"?\n\nL'operazione non può essere annullata.`))return;state.clients=state.clients.filter(x=>String(x.id)!==String(id));save();toast('Cliente eliminato');render();};
+  window.tfPreviewClientAttachment=function(id,i){const c=state.clients.find(x=>String(x.id)===String(id)),a=c?.attachments?.[i];if(!a)return;const w=window.open();if(w){w.document.write(`<title>${escLocal(a.name)}</title><style>body{margin:0;background:#111;display:flex;align-items:center;justify-content:center;height:100vh}img{max-width:96vw;max-height:96vh}iframe{width:96vw;height:96vh;border:0;background:#fff}</style>${a.type.startsWith('image/')?`<img src="${a.data}">`:`<iframe src="${a.data}"></iframe>`}`);w.document.close();}};
+  window.tfRemoveClientAttachment=function(id,i){const c=state.clients.find(x=>String(x.id)===String(id));if(!c?.attachments?.[i])return;if(!confirm(`Eliminare l'allegato "${c.attachments[i].name}"?`))return;c.attachments.splice(i,1);save();render();toast('Allegato eliminato');};
+  window.openClient=function(id){ensureClientCodes();const c=state.clients.find(x=>String(x.id)===String(id));if(!c)return;const jobs=state.interventions.filter(x=>String(x.clientId)===String(c.id)),address=mapsQuery(c);const wrap=document.createElement('div');wrap.className='modal-backdrop';wrap.innerHTML=`<div class="modal modal-large"><div class="detail-head"><div><div class="eyebrow">Scheda cliente · ${escLocal(c.code)}</div><h2>${escLocal(c.name)}</h2><p>${escLocal(address||'Indirizzo non inserito')}</p></div><button class="icon-btn modal-close" aria-label="Chiudi">×</button></div><div class="detail-grid"><div class="detail-card"><span>Codice cliente</span><strong>${escLocal(c.code)}</strong></div><div class="detail-card"><span>Telefono</span><strong>${escLocal(c.phone||'—')}</strong></div><div class="detail-card"><span>Impianto principale</span><strong>${escLocal(c.plant||'—')}</strong></div><div class="detail-card"><span>Zona</span><strong>${escLocal(c.zone||'—')}</strong></div><div class="detail-card"><span>Indirizzo</span><strong>${escLocal(c.address||'—')}</strong></div><div class="detail-card"><span>Località</span><strong>${escLocal([c.frazione,c.cap,c.city,c.province].filter(Boolean).join(' ')||'—')}</strong></div></div><div style="display:flex;flex-wrap:wrap;gap:10px;margin:18px 0"><button class="primary" onclick="tfEditClient('${c.id}')">✏ Modifica</button><a class="ghost-btn" href="${mapsUrl(c)}" target="_blank" rel="noopener">🗺 Apri mappa</a><a class="ghost-btn" href="${directionsUrl(c)}" target="_blank" rel="noopener">🚗 Indicazioni stradali</a><button class="ghost-btn" onclick="tfDeleteClient('${c.id}')">Elimina</button></div><div class="panel section-gap"><div class="panel-head"><h3>Documenti e foto</h3><span class="badge">${c.attachments.length} allegati</span></div>${attachmentList(c)}</div><h3 class="section-title">Storico interventi</h3><div class="job-list">${jobs.map(jobRow).join('')||'<div class="empty">Nessun intervento.</div>'}</div></div>`;document.body.appendChild(wrap);wrap.querySelector('.modal-close').onclick=()=>wrap.remove();};
+  function renderClientEnhanced(){
+    ensureClientCodes();if(state.view!=='clients')return;const root=document.getElementById('client-table');const search=document.getElementById('client-search');if(!root||!search)return;
+    if(!document.getElementById('client-filters')){const bar=search.parentElement;bar.classList.add('tf-client-searchbar');bar.innerHTML=`<div class="tf-client-search-main"><input id="client-search" placeholder="Cerca codice, cliente, telefono, indirizzo, comune…"></div><div id="client-filters" class="tf-client-filters"><select id="client-province"><option value="">Tutte le province</option></select><select id="client-city"><option value="">Tutti i comuni</option></select><select id="client-zone"><option value="">Tutte le zone</option></select><select id="client-plant"><option value="">Tutti gli impianti</option></select></div>`;['client-search','client-province','client-city','client-zone','client-plant'].forEach(id=>document.getElementById(id)?.addEventListener('input',renderClientEnhanced));}
+    const q=(document.getElementById('client-search')?.value||'').toLowerCase().trim();const fields=['province','city','zone','plant'];fields.forEach(f=>{const el=document.getElementById('client-'+f);if(!el)return;const values=[...new Set(state.clients.map(c=>c[f]).filter(Boolean).sort((a,b)=>a.localeCompare(b)))];const current=el.value;el.innerHTML=`<option value="">${f==='province'?'Tutte le province':f==='city'?'Tutti i comuni':f==='zone'?'Tutte le zone':'Tutti gli impianti'}</option>`+values.map(v=>`<option value="${escLocal(v)}">${escLocal(v)}</option>`).join('');if(values.includes(current))el.value=current;});
+    const pv=document.getElementById('client-province')?.value||'',ci=document.getElementById('client-city')?.value||'',zo=document.getElementById('client-zone')?.value||'',pl=document.getElementById('client-plant')?.value||'';
+    const list=state.clients.filter(c=>{const hay=[c.code,c.name,c.phone,c.address,c.frazione,c.city,c.cap,c.province,c.zone,c.plant].filter(Boolean).join(' ').toLowerCase();return (!q||hay.includes(q))&&(!pv||c.province===pv)&&(!ci||c.city===ci)&&(!zo||c.zone===zo)&&(!pl||c.plant===pl);});
+    root.innerHTML=list.length?`<table class="table tf-client-table"><thead><tr><th>Nr.</th><th>Cliente</th><th>Contatto</th><th>Località</th><th>Impianto</th><th>Allegati</th><th>Azioni</th></tr></thead><tbody>${list.map(c=>`<tr><td><span class="client-code">${escLocal(c.code)}</span></td><td><button class="tf-client-name" onclick="openClient('${c.id}')">${escLocal(c.name)}</button></td><td>${escLocal(c.phone||'—')}</td><td>${escLocal([c.frazione,c.city,c.province].filter(Boolean).join(' · ')||'—')}</td><td><span class="badge">${escLocal(c.plant||'—')}</span></td><td><span class="badge">${c.attachments.length}</span></td><td style="white-space:nowrap"><button class="panel-link" onclick="openClient('${c.id}')">Apri</button> <button class="panel-link" onclick="tfEditClient('${c.id}')">Modifica</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Nessun cliente trovato con i filtri selezionati.</div>';
+  }
+  const originalRender=window.render;let observer;
+  function installObserver(){if(observer)return;observer=new MutationObserver(()=>{if(state.view==='clients')setTimeout(renderClientEnhanced,0);});observer.observe(document.getElementById('view'),{childList:true,subtree:true});setTimeout(renderClientEnhanced,0);}
+  ensureClientCodes();installObserver();
+  const style=document.createElement('style');style.textContent=`.tf-client-searchbar{display:grid!important;gap:10px}.tf-client-search-main input{width:100%}.tf-client-filters{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px}.tf-client-filters select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text)}.tf-client-name{border:0;background:none;padding:0;color:var(--text);font:inherit;font-weight:750;cursor:pointer;text-align:left}.tf-client-name:hover{text-decoration:underline;color:var(--green)}.client-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;font-weight:750;color:var(--green-dark)}.tf-client-attach-box{margin-top:18px}.tf-attachment-list{display:grid;gap:8px}.tf-attachment{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fff}.tf-attachment-icon{font-size:10px;font-weight:800;padding:5px 7px;border-radius:6px;background:var(--green-soft);color:var(--green-dark)}.tf-attachment small{display:block;color:var(--muted);margin-top:2px}.tf-attachment-actions{display:flex;gap:10px}.tf-attachment-actions .danger{color:#a43c35}@media(max-width:900px){.tf-client-filters{grid-template-columns:1fr 1fr}}@media(max-width:600px){.tf-client-filters{grid-template-columns:1fr}.tf-attachment{grid-template-columns:auto 1fr}.tf-attachment-actions{grid-column:2}}`;document.head.appendChild(style);
 })();
