@@ -8,18 +8,16 @@
   const centralPromise=new Promise(resolve=>{resolveCentral=resolve});
   const read=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??f}catch{return f}};
   const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-  const localLogin=window.tfLogin;
-  const localLogout=window.tfLogout;
   const localUsers=window.tfUsers;
   const localSaveUser=window.tfSaveUser;
-  const localChangePassword=window.tfChangePassword;
 
-  /* Blocca la gara tra login locale e login D1 durante il bootstrap. */
+  /* D1 è autorevole: nessun fallback al login locale. */
   window.tfCentralAuthPromise=centralPromise;
   window.tfLogin=async function(){
-    const useCentral=await centralPromise;
-    if(useCentral && typeof window.tfCentralLogin==='function')return window.tfCentralLogin();
-    if(typeof localLogin==='function')return localLogin();
+    const ready=await centralPromise;
+    if(ready && typeof window.tfCentralLogin==='function')return window.tfCentralLogin();
+    const msg=document.getElementById('tf-login-error');
+    if(msg)msg.textContent='Servizio centrale non disponibile. Ricarica la pagina e riprova.';
   };
 
   function mirrorUser(u){
@@ -36,14 +34,20 @@
     save(USERS,users.map(u=>({...u,passwordHash:passwords.get(String(u.id))||'',mustChangePassword:!!u.mustChangePassword})));
   }
   async function health(){
-    try{const r=await fetch('./api/health',{cache:'no-store'});if(!r.ok)return null;const j=await r.json();return j?.schemaReady?j:null}catch{return null}
+    try{
+      const r=await fetch('./api/health',{cache:'no-store'});
+      if(!r.ok)return null;
+      const j=await r.json();
+      return j?.schemaReady && Array.isArray(j.tables) && j.tables.includes('users') ? j : null;
+    }catch{return null}
   }
   async function syncUsers(){
     const r=await fetch('./api/users',{credentials:'same-origin',cache:'no-store'});
     if(!r.ok)throw new Error('users '+r.status);
     const j=await r.json();
-    if(j.ok&&Array.isArray(j.users))mirrorUsers(j.users);
-    return j.users||[];
+    if(!j.ok||!Array.isArray(j.users))throw new Error('users api invalid');
+    mirrorUsers(j.users);
+    return j.users;
   }
   async function centralLogin(){
     const ident=(document.getElementById('tf-login-ident')?.value||'').trim();
@@ -52,7 +56,7 @@
     try{
       const r=await fetch('./api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({identifier:ident,password:pass})});
       const j=await r.json().catch(()=>({}));
-      if(!r.ok||!j.ok){if(msg)msg.textContent='Credenziali non valide.';return;}
+      if(!r.ok||!j.ok){if(msg)msg.textContent=j.error==='AUTH_SERVER_ERROR'?'Errore del servizio di autenticazione.': 'Credenziali non valide.';return;}
       mirrorUser(j.user);
       location.reload();
     }catch(e){console.error(e);if(msg)msg.textContent='Servizio di accesso temporaneamente non disponibile.';}
@@ -61,11 +65,11 @@
   window.tfCentralAuthReady=()=>centralReady;
 
   async function boot(){
+    /* Elimina eventuale sessione locale preesistente: da ora l'accesso è centrale. */
+    localStorage.removeItem(SESSION);
     const h=await health();
     if(!h){resolveCentral(false);return;}
     centralReady=true;
-    /* D1 è disponibile: da questo momento il login locale non è consentito. */
-    resolveCentral(true);
     try{
       const r=await fetch('./api/auth/me',{credentials:'same-origin',cache:'no-store'});
       if(r.ok){const j=await r.json();if(j.ok)mirrorUser(j.user);}
@@ -73,6 +77,7 @@
       await syncUsers();
       if(typeof window.tfRefreshTechnicians==='function')window.tfRefreshTechnicians();
     }catch(e){console.warn('TECNOFA central auth:',e)}
+    resolveCentral(true);
 
     window.tfLogin=centralLogin;
     window.tfLogout=async function(){
