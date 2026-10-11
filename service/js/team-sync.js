@@ -11,7 +11,7 @@
   function refresh(){
     const list=activeTechnicians();
     if(window.state) state.technicians=list.map(u=>u.name).filter(Boolean);
-    localStorage.setItem('tf_technicians',JSON.stringify((window.state?.technicians)||list.map(u=>u.name).filter(Boolean)));
+    localStorage.setItem('tf_technicians',JSON.stringify(list.map(u=>u.name).filter(Boolean)));
     return list;
   }
   window.tfGetTechnicianUsers=activeTechnicians;
@@ -27,6 +27,8 @@
     if(typeof window.tfUserModal==='function')window.tfUserModal(u.id);
     else toast('Modulo Utenti non ancora disponibile. Aggiorna la pagina.');
   };
+  /* Compatibilità con il pulsante già presente nella scheda Tecnici. */
+  window.tfEditUserFromTech=function(id){window.tfEditTechnician(id)};
   window.tfNewTechnician=function(){
     const current=window.tfCurrentUser?window.tfCurrentUser():null;
     if(!current || (current.role!=='AMMINISTRATORE' && current.permissions?.users!=='manage')){
@@ -42,6 +44,15 @@
     const names=refresh().map(u=>u.name).filter(Boolean);
     return [...new Set(names.length?names:['Fabio'])];
   };
+  /* Dopo il salvataggio di un utente aggiorna immediatamente anche l'Agenda. */
+  const originalSaveUser=window.tfSaveUser;
+  if(typeof originalSaveUser==='function'){
+    window.tfSaveUser=async function(id){
+      const result=await originalSaveUser(id);
+      refresh();
+      return result;
+    };
+  }
   refresh();
   window.addEventListener('storage',e=>{if(e.key===USERS||e.key==='tf_technicians')refresh()});
 })();
