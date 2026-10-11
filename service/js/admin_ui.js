@@ -1,4 +1,4 @@
-/* TECNOFA Gestionale — UI amministrazione e navigazione */
+/* TECNOFA Gestionale — UI amministrazione, navigazione e dashboard */
 (function(){
   const euro=n=>Number(n||0).toLocaleString('it-IT',{style:'currency',currency:'EUR'});
   const read=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??f}catch{return f}};
@@ -19,12 +19,22 @@
     const get=id=>nav.querySelector(`[data-view="${id}"]`);
     const labels=[['Principale',['dashboard','agenda','interventions']],['Anagrafiche',['clients','plants','technicians']],['Operatività',['warehouse','reports']],['Azienda',['administration','archivi']]];
     const nodes=[];
-    labels.forEach(([label,ids])=>{const h=document.createElement('div');h.className='tf-nav-label';h.textContent=label;nodes.push(h);ids.forEach(id=>{const b=get(id);if(b)nodes.push(b)});});
+    labels.forEach(([label,ids])=>{const h=document.createElement('div');h.className='nav-section';h.textContent=label;nodes.push(h);ids.forEach(id=>{const b=get(id);if(b)nodes.push(b);});});
     nav.querySelectorAll('.nav-item[data-view="users"]').forEach(x=>x.remove());nav.innerHTML='';nodes.forEach(n=>nav.appendChild(n));
   }
+  function connectDashboard(){
+    if(typeof window.tfDashboardPage!=='function')return;
+    const baseRender=window.render;
+    window.render=function(){if(state.view==='dashboard'){view.innerHTML=window.tfDashboardPage();title.textContent='Dashboard';return}return baseRender.apply(this,arguments)};
+    if(typeof window.tfNavigate==='function'){
+      const baseNavigate=window.tfNavigate;
+      window.tfNavigate=function(v){baseNavigate(v);if(v==='dashboard'&&typeof window.tfDashboardPage==='function'){view.innerHTML=window.tfDashboardPage();title.textContent='Dashboard';}};
+    }
+    if(state.view==='dashboard')window.render();
+  }
   function loadDashboard(){
-    if(window.tfDashboardPage)return;
-    const s=document.createElement('script');s.src='js/dashboard.js?v=20261011-23';s.onload=()=>{if(state.view==='dashboard'&&typeof window.render==='function')window.render()};document.body.appendChild(s);
+    if(window.tfDashboardPage){connectDashboard();return;}
+    const s=document.createElement('script');s.src='js/dashboard.js?v=20261011-23';s.onload=connectDashboard;document.body.appendChild(s);
   }
   setTimeout(()=>{reorganizeSidebar();loadDashboard();},0);
 })();
