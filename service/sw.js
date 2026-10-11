@@ -1,13 +1,6 @@
-const CACHE='tecnofa-gestionale-v38';
+const CACHE='tecnofa-gestionale-v39';
 const ASSETS=['./','./index.html','./css/style.css','./css/dashboard.css','./css/client-ui.css','./css/agenda.css','./css/warehouse.css','./css/archivi.css','./css/admin.css','./css/auth.css','./css/client-search.css','./css/activity-style.css','./js/app.js','./js/dashboard.js','./js/agenda.js','./js/agenda-dnd.js','./js/navigation.js','./js/warehouse.js','./js/warehouse-v2.js','./js/warehouse-v2-fix.js','./js/ui-shell-v2.js','./js/ui-shell-version.js','./js/archivi.js','./js/clienti.js','./js/client_ui.js','./js/admin.js','./js/admin_tables.js','./js/admin_ui.js','./js/pdf.js','./js/pdf_reports.js','./js/admin_pdf_config.js','./js/admin_relations.js','./js/calendar_overrides.js','./js/auth.js','./js/client-search.js','./js/intervention-types.js','./js/client-search-behavior.js','./js/data-protection.js','./js/data-protection-fix.js','./js/manifest.json'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('tecnofa-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-async function appResponse(request){
-  const res=await fetch(request);
-  if(!res.ok)return res;
-  if(request.mode==='navigate'||request.destination==='document'){
-    try{const text=await res.clone().text();if(!text.includes('data-protection.js')){const injected=text.replace('</body>','<script src="js/data-protection.js?v=20261011-38"></script><script src="js/data-protection-fix.js?v=20261011-38"></script><script src="js/warehouse-v2.js?v=20261011-38"></script><script src="js/warehouse-v2-fix.js?v=20261011-38"></script><script src="js/ui-shell-v2.js?v=20261011-38"></script><script src="js/ui-shell-version.js?v=20261011-38"></script></body>');return new Response(injected,{status:res.status,statusText:res.statusText,headers:new Headers(res.headers)})}}catch{}
-  }
-  return res;
-}
+async function appResponse(request){const res=await fetch(request);if(!res.ok)return res;return res}
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(appResponse(e.request).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return res}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))));});
