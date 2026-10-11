@@ -1,0 +1,51 @@
+/* TECNOFA Gestionale — dashboard v29 */
+.tf-dashboard{display:grid;gap:18px}
+.tf-dashboard-head{margin-bottom:0}
+.tf-dashboard-actions{display:flex;gap:10px;align-items:center}
+.tf-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tf-kpi{appearance:none;width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:13px;padding:16px;text-align:left;box-shadow:var(--shadow);min-width:0}
+.tf-kpi:hover{border-color:#b9cfbe;background:var(--green-soft);transform:translateY(-1px)}
+.tf-kpi span,.tf-kpi small{display:block;color:var(--muted)}
+.tf-kpi span{font-size:12px;font-weight:700}
+.tf-kpi strong{display:block;font-size:27px;line-height:1.1;margin:7px 0 4px;color:var(--green-dark)}
+.tf-kpi small{font-size:11px}
+.tf-stats-panel{padding:16px 18px}
+.tf-stats-head{margin-bottom:12px}
+.tf-stats-head h2{font-size:16px}
+.tf-stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.tf-stat{border:1px solid var(--line);border-radius:11px;background:#fbfcfb;padding:13px;min-width:0}
+.tf-stat span,.tf-stat small{display:block;color:var(--muted)}
+.tf-stat span{font-size:11px;font-weight:750}
+.tf-stat strong{display:block;color:var(--green-dark);font-size:22px;margin:5px 0 2px}
+.tf-stat small{font-size:10px}
+.tf-dashboard-main,.tf-dashboard-bottom{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr);gap:18px}
+.tf-dashboard-bottom{grid-template-columns:minmax(0,1.7fr) minmax(280px,.7fr)}
+.tf-dashboard .panel{min-width:0}
+.tf-today-list,.tf-next-list,.tf-alert-list{display:grid;gap:8px}
+.tf-today-row,.tf-next-row,.tf-alert-list button{width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:11px 12px;text-align:left;min-width:0}
+.tf-today-row{display:flex;align-items:center;gap:12px}
+.tf-today-row:hover,.tf-next-row:hover,.tf-alert-list button:hover{border-color:#b9cfbe;background:var(--green-soft)}
+.tf-time{width:48px;flex:0 0 48px;font-weight:800;color:var(--green-dark)}
+.tf-job{min-width:0;flex:1}
+.tf-job strong,.tf-job small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tf-job small{color:var(--muted);font-size:11px;margin-top:3px}
+.tf-next-row{display:grid;grid-template-columns:155px minmax(120px,1fr) minmax(100px,.7fr) auto;align-items:center;gap:10px}
+.tf-next-row span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tf-next-row small{color:var(--muted)}
+.tf-alert-list button{display:block}
+.tf-alert-list strong,.tf-alert-list small{display:block}
+.tf-alert-list small{color:var(--muted);font-size:11px;margin-top:3px}
+.tf-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tf-quick-grid button{appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:11px;padding:14px;text-align:left;min-height:72px}
+.tf-quick-grid button:hover{border-color:#b9cfbe;background:var(--green-soft)}
+.tf-quick-grid strong,.tf-quick-grid small{display:block}
+.tf-quick-grid strong{font-size:13px}
+.tf-quick-grid small{color:var(--muted);font-size:11px;margin-top:4px}
+.tf-ok-box{padding:12px;border-radius:10px;background:var(--green-soft);color:var(--green-dark);font-size:13px}
+.tf-empty-state{padding:28px 15px}
+/* La navigazione deve restare sempre visibile su desktop: niente sezioni accidentalmente collassate. */
+.sidebar .nav-section+.nav-item{display:flex!important}
+.sidebar .nav-section~.nav-item{visibility:visible}
+.sidebar .nav{overflow:visible}
+@media(max-width:1050px){.tf-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tf-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tf-dashboard-main,.tf-dashboard-bottom{grid-template-columns:1fr}.tf-next-row{grid-template-columns:145px minmax(120px,1fr) minmax(100px,.7fr) auto}}
+@media(max-width:760px){.tf-dashboard-actions{width:100%;display:grid;grid-template-columns:1fr 1.6fr}.tf-dashboard-actions button{width:100%}.tf-kpi-grid{grid-template-columns:1fr 1fr;gap:9px}.tf-kpi{padding:13px}.tf-kpi strong{font-size:23px}.tf-stats-grid{grid-template-columns:1fr 1fr}.tf-stats-panel{padding:14px}.tf-next-row{grid-template-columns:1fr;gap:4px}.tf-next-row .badge{justify-self:start}.tf-today-row{padding:10px}.tf-today-row .badge{display:none}.tf-quick-grid{grid-template-columns:1fr 1fr}.tf-quick-grid button{min-height:66px;padding:11px}}
