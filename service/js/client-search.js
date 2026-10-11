@@ -21,12 +21,14 @@
     wrap.innerHTML=`<div class="modal tf-global-search-modal" role="dialog" aria-modal="true" aria-labelledby="tf-search-title"><div class="tf-search-head"><div><div class="eyebrow">Ricerca rapida</div><h2 id="tf-search-title">Cerca cliente</h2><p>Trova subito una scheda anche se conosci solo una parte del nome o dell'indirizzo.</p></div><button type="button" class="icon-btn modal-close" aria-label="Chiudi">×</button></div><div class="tf-search-input-wrap"><span aria-hidden="true">⌕</span><input id="tf-global-client-search" type="search" autocomplete="off" placeholder="Nome, codice, telefono, città, impianto…"><kbd>Esc</kbd></div><div id="tf-global-search-results" class="tf-client-results">${resultHtml([], '')}</div></div>`;
     document.body.appendChild(wrap);
     const input=wrap.querySelector('#tf-global-client-search'),results=wrap.querySelector('#tf-global-search-results');
-    const update=()=>{results.innerHTML=resultHtml(find(input.value),input.value);results.querySelectorAll('[data-client-id]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.clientId;wrap.remove();if(typeof openClient==='function')openClient(id);}));};
+    const close=()=>{wrap.remove();document.removeEventListener('keydown',onKey)};
+    const onKey=e=>{if(e.key==='Escape')close()};
+    const update=()=>{results.innerHTML=resultHtml(find(input.value),input.value);results.querySelectorAll('[data-client-id]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.clientId;close();if(typeof openClient==='function')openClient(id)}));};
     input.addEventListener('input',update);
-    wrap.querySelector('.modal-close').onclick=()=>wrap.remove();
-    wrap.addEventListener('click',e=>{if(e.target===wrap)wrap.remove()});
+    wrap.querySelector('.modal-close').onclick=close;
+    wrap.addEventListener('click',e=>{if(e.target===wrap)close()});
+    document.addEventListener('keydown',onKey);
     input.focus();
-    document.addEventListener('keydown',function escHandler(e){if(e.key==='Escape'){wrap.remove();document.removeEventListener('keydown',escHandler)}},{once:false});
   }
   function enhanceClientSelect(select){
     if(!select||select.dataset.tfClientSearch==='1')return;
