@@ -7,11 +7,11 @@
   let centralReady=false;
   const read=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??f}catch{return f}};
   const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const localLogin=window.tfLogin;
   const localLogout=window.tfLogout;
   const localUsers=window.tfUsers;
   const localSaveUser=window.tfSaveUser;
+  const localChangePassword=window.tfChangePassword;
 
   function mirrorUser(u){
     const users=Array.isArray(read(USERS,[]))?read(USERS,[]):[];
@@ -69,6 +69,24 @@
       location.href=location.pathname;
     };
 
+    window.tfChangePassword=async function(){
+      const box=document.createElement('div');
+      box.className='modal-backdrop';
+      box.innerHTML=`<div class="modal" style="max-width:520px"><h2>Cambia password</h2><p>La nuova password sarà salvata nel database centrale TECNOFA.</p><div class="field"><label>Nuova password</label><input id="tf-central-pass" type="password" autocomplete="new-password" minlength="8"></div><div class="field" style="margin-top:10px"><label>Ripeti password</label><input id="tf-central-pass2" type="password" autocomplete="new-password" minlength="8"></div><div id="tf-central-pass-msg" class="tf-login-error"></div><div class="modal-actions"><button class="ghost-btn" onclick="this.closest('.modal-backdrop').remove()">Annulla</button><button class="primary" id="tf-central-pass-save">Salva password</button></div></div>`;
+      document.body.appendChild(box);
+      box.querySelector('#tf-central-pass-save').onclick=async()=>{
+        const p=box.querySelector('#tf-central-pass').value,p2=box.querySelector('#tf-central-pass2').value,msg=box.querySelector('#tf-central-pass-msg');
+        if(p.length<8||p!==p2){msg.textContent='Le password devono coincidere e contenere almeno 8 caratteri.';return;}
+        try{
+          const r=await fetch('./api/auth/password',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({password:p})});
+          const j=await r.json().catch(()=>({}));
+          if(!r.ok||!j.ok){msg.textContent='Impossibile aggiornare la password.';return;}
+          const u=read(USERS,[]),me=u.find(x=>x.id===read(SESSION,null)?.userId);if(me)me.mustChangePassword=false;save(USERS,u);
+          box.remove();toast('Password aggiornata nel database centrale');
+        }catch(e){console.error(e);msg.textContent='Database non raggiungibile.';}
+      };
+    };
+
     if(typeof localSaveUser==='function'){
       window.tfSaveUser=async function(id){
         const name=document.getElementById('u-name')?.value.trim()||'';
@@ -93,10 +111,6 @@
       };
     }
     if(typeof localUsers==='function')window.tfUsers=()=>read(USERS,[]);
-    if(typeof window.tfCurrentUser==='function'){
-      const localCurrent=window.tfCurrentUser;
-      window.tfCurrentUser=()=>localCurrent();
-    }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
