@@ -1,7 +1,8 @@
-/* TECNOFA Gestionale — UI clienti v25 */
+/* TECNOFA Gestionale — UI clienti v26 */
 (function(){
+  /* app.js defines state as a global script binding, not window.state. */
+  const readState=()=>{try{if(typeof state!=='undefined'&&state)return state}catch(e){}return window.state||{};};
   const escC=s=>typeof esc==='function'?esc(String(s??'')):String(s??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
-  const readState=()=>window.state||{};
   const mapsQuery=c=>[c.address,c.frazione,c.city,c.cap,c.province].filter(Boolean).join(', ');
   const mapsUrl=c=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(mapsQuery(c));
   const formatSize=n=>!n?'':n<1024?`${n} B`:n<1048576?`${(n/1024).toFixed(0)} KB`:`${(n/1048576).toFixed(1)} MB`;
