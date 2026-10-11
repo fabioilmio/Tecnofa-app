@@ -1,13 +1,111 @@
 <!doctype html>
 <html lang="it">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#17352d"><meta name="description" content="TECNOFA Gestionale — gestione tecnica, magazzino e amministrazione."><link rel="manifest" href="manifest.json?v=20261011-32"><link rel="stylesheet" href="css/style.css?v=20261011-32"><link rel="stylesheet" href="css/dashboard.css?v=20261011-32"><link rel="stylesheet" href="css/client-ui.css?v=20261011-32"><link rel="stylesheet" href="css/agenda.css?v=20261011-32"><link rel="stylesheet" href="css/warehouse.css?v=20261011-32"><link rel="stylesheet" href="css/archivi.css?v=20261011-32"><link rel="stylesheet" href="css/admin.css?v=20261011-32"><link rel="stylesheet" href="css/auth.css?v=20261011-32"><link rel="stylesheet" href="css/client-search.css?v=20261011-32"><title>TECNOFA Gestionale</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17352d">
+<meta name="description" content="TECNOFA Gestionale — gestione tecnica, magazzino e amministrazione.">
+<link rel="manifest" href="manifest.json?v=20261011-38">
+<link rel="stylesheet" href="css/style.css?v=20261011-38">
+<link rel="stylesheet" href="css/dashboard.css?v=20261011-38">
+<link rel="stylesheet" href="css/client-ui.css?v=20261011-38">
+<link rel="stylesheet" href="css/agenda.css?v=20261011-38">
+<link rel="stylesheet" href="css/warehouse.css?v=20261011-38">
+<link rel="stylesheet" href="css/archivi.css?v=20261011-38">
+<link rel="stylesheet" href="css/admin.css?v=20261011-38">
+<link rel="stylesheet" href="css/auth.css?v=20261011-38">
+<link rel="stylesheet" href="css/client-search.css?v=20261011-38">
+<title>TECNOFA Gestionale</title>
 </head>
-<body><div id="app-shell" class="shell"><aside class="sidebar"><div class="brand"><div class="brand-mark" aria-hidden="true"><span>T</span></div><div><strong>TECNOFA</strong><small>Gestionale</small></div></div><nav id="main-nav" class="nav" aria-label="Navigazione principale"><div class="nav-section">Principale</div><button class="nav-item active" data-view="dashboard"><span>⌂</span> Dashboard</button><button class="nav-item" data-view="agenda"><span>◷</span> Agenda</button><button class="nav-item" data-view="interventions"><span>✓</span> Interventi</button><div class="nav-section">Anagrafiche</div><button class="nav-item" data-view="clients"><span>♙</span> Clienti</button><button class="nav-item" data-view="plants"><span>⌂</span> Impianti</button><button class="nav-item" data-view="technicians"><span>♟</span> Tecnici</button><div class="nav-section">Operatività</div><button class="nav-item" data-view="warehouse"><span>▦</span> Magazzino</button><button class="nav-item" data-view="reports"><span>▤</span> Rapportini</button><div class="nav-section">Azienda</div><button class="nav-item" data-view="administration"><span>€</span> Amministrazione</button><button class="nav-item" data-view="archivi"><span>⚙</span> Archivi</button></nav><div class="sidebar-foot"><div class="user-mini"><div class="avatar">D</div><div><strong>Dervishaj Fatjon</strong><small>Amministratore</small></div></div><button class="nav-item" data-view="settings"><span>⚙</span> Impostazioni</button></div></aside><main class="main"><header class="topbar"><button id="mobile-menu" class="icon-btn" aria-label="Apri menu">☰</button><div class="breadcrumb">TECNOFA Gestionale <span>/</span> <b id="page-title">Dashboard</b></div><div class="top-actions"><button id="install-btn" class="ghost-btn hidden">Installa app</button><div class="status-dot"><i></i> Sistema operativo</div></div></header><section id="view" class="content"></section></main></div><div id="toast" class="toast" role="status"></div>
-<script src="js/app.js?v=20261011-32"></script><script src="js/dashboard.js?v=20261011-32"></script><script src="js/agenda.js?v=20261011-32"></script><script src="js/navigation.js?v=20261011-32"></script><script src="js/warehouse.js?v=20261011-32"></script><script src="js/archivi.js?v=20261011-32"></script><script src="js/clienti.js?v=20261011-32"></script><script src="js/client_ui.js?v=20261011-32"></script><script src="js/admin.js?v=20261011-32"></script><script src="js/admin_tables.js?v=20261011-32"></script><script src="js/admin_ui.js?v=20261011-32"></script><script src="js/pdf.js?v=20261011-32"></script><script src="js/pdf_reports.js?v=20261011-32"></script><script src="js/admin_pdf_config.js?v=20261011-32"></script><script src="js/admin_relations.js?v=20261011-32"></script><script src="js/calendar_overrides.js?v=20261011-32"></script><script src="js/auth.js?v=20261011-32"></script><script src="js/client-search.js?v=20261011-32"></script><script src="js/agenda-dnd.js?v=20261011-32"></script>
+<body>
+<div id="app-shell" class="shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark" aria-hidden="true"><span>T</span></div><div><strong>TECNOFA</strong><small>Gestionale</small></div></div>
+    <nav id="main-nav" class="nav" aria-label="Navigazione principale">
+      <div class="nav-section">Principale</div>
+      <button class="nav-item active" data-view="dashboard"><span>⌂</span> Dashboard</button>
+      <button class="nav-item" data-view="agenda"><span>◷</span> Agenda</button>
+      <button class="nav-item" data-view="interventions"><span>✓</span> Interventi</button>
+      <div class="nav-section">Anagrafiche</div>
+      <button class="nav-item" data-view="clients"><span>♙</span> Clienti</button>
+      <button class="nav-item" data-view="plants"><span>⌂</span> Impianti</button>
+      <button class="nav-item" data-view="technicians"><span>♟</span> Tecnici</button>
+      <div class="nav-section">Operatività</div>
+      <button class="nav-item" data-view="warehouse"><span>▦</span> Magazzino</button>
+      <button class="nav-item" data-view="reports"><span>▤</span> Rapportini</button>
+      <div class="nav-section">Azienda</div>
+      <button class="nav-item" data-view="administration"><span>€</span> Amministrazione</button>
+      <button class="nav-item" data-view="archivi"><span>⚙</span> Archivi</button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="user-mini"><div class="avatar">D</div><div><strong>Dervishaj Fatjon</strong><small>Amministratore</small></div></div>
+      <button class="nav-item" data-view="settings"><span>⚙</span> Impostazioni</button>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <button id="mobile-menu" class="icon-btn" aria-label="Apri menu">☰</button>
+      <div class="breadcrumb">TECNOFA Gestionale <span>/</span> <b id="page-title">Dashboard</b></div>
+      <div class="top-actions"><button id="install-btn" class="ghost-btn hidden">Installa app</button><div class="status-dot"><i></i> Sistema operativo</div></div>
+    </header>
+    <section id="view" class="content"></section>
+  </main>
+</div>
+<div id="toast" class="toast" role="status"></div>
+
+<script src="js/app.js?v=20261011-38"></script>
+<script src="js/dashboard.js?v=20261011-38"></script>
+<script src="js/agenda.js?v=20261011-38"></script>
+<script src="js/navigation.js?v=20261011-38"></script>
+<script src="js/warehouse.js?v=20261011-38"></script>
+<script src="js/archivi.js?v=20261011-38"></script>
+<script src="js/clienti.js?v=20261011-38"></script>
+<script src="js/client_ui.js?v=20261011-38"></script>
+<script src="js/admin.js?v=20261011-38"></script>
+<script src="js/admin_tables.js?v=20261011-38"></script>
+<script src="js/admin_ui.js?v=20261011-38"></script>
+<script src="js/pdf.js?v=20261011-38"></script>
+<script src="js/pdf_reports.js?v=20261011-38"></script>
+<script src="js/admin_pdf_config.js?v=20261011-38"></script>
+<script src="js/admin_relations.js?v=20261011-38"></script>
+<script src="js/calendar_overrides.js?v=20261011-38"></script>
+<script src="js/auth.js?v=20261011-38"></script>
+<script src="js/client-search.js?v=20261011-38"></script>
+<script src="js/agenda-dnd.js?v=20261011-38"></script>
+
+<!-- Moduli aggiuntivi: caricati direttamente. Non dipendono dal Service Worker. -->
+<script src="js/data-protection.js?v=20261011-38"></script>
+<script src="js/data-protection-fix.js?v=20261011-38"></script>
+<script src="js/warehouse-v2.js?v=20261011-38"></script>
+<script src="js/warehouse-v2-fix.js?v=20261011-38"></script>
+<script src="js/ui-shell-v2.js?v=20261011-38"></script>
+<script src="js/ui-shell-version.js?v=20261011-38"></script>
+
 <script>
-window.settings=function(){const u=window.tfCurrentUser?window.tfCurrentUser():null;const name=u?.name||'Utente';return `<div class="page-head"><div><div class="eyebrow">Sistema</div><h1>Impostazioni</h1><p>Controllo accesso, aggiornamento dell'applicazione, backup e sessione corrente.</p></div></div><div class="tf-settings-grid"><section class="tf-settings-card"><h2>Sessione</h2><p>Account attualmente collegato al gestionale.</p><div class="detail-card"><span>Utente</span><strong>${esc(name)}</strong></div><div class="tf-settings-actions" style="margin-top:12px"><button class="tf-danger-btn" onclick="if(confirm('Vuoi uscire dal gestionale?'))tfLogout()">↪ Esci dal gestionale</button><button class="ghost-btn" onclick="tfChangePassword()">Cambia password</button></div></section><section class="tf-settings-card"><h2>Aggiornamento applicazione</h2><p>Usa questo comando quando è stata pubblicata una nuova versione o quando l'app mostra una versione precedente.</p><div class="tf-settings-actions"><button class="primary" id="tf-force-update" onclick="tfForceUpdate()">↻ Aggiorna e svuota cache</button></div><div id="tf-update-status" class="tf-update-status"></div><div class="tf-settings-version">TECNOFA Gestionale · cache PWA v32</div></section><section class="tf-settings-card tf-backup-card"><h2>Backup dati</h2><p>Salva una copia locale di clienti, interventi, utenti, magazzino, archivi, impostazioni e dati del gestionale. La sessione corrente non viene esportata.</p><div class="tf-backup-actions"><button class="primary" onclick="tfExportBackup()">↓ Esporta backup</button><button class="ghost-btn" onclick="document.getElementById('tf-backup-file').click()">↑ Importa backup</button><input id="tf-backup-file" type="file" accept="application/json,.json" hidden onchange="tfImportBackup(this)"></div><div id="tf-backup-status" class="tf-update-status"></div><small class="tf-backup-note">Il backup contiene anche gli utenti e le loro impostazioni. Conservalo in un luogo sicuro.</small></div></section></div>`};
-window.tfForceUpdate=async function(){const status=document.getElementById('tf-update-status'),btn=document.getElementById('tf-force-update');if(btn)btn.disabled=true;if(status)status.textContent='Pulizia cache e aggiornamento in corso…';try{if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));}if('caches' in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('tecnofa-')).map(k=>caches.delete(k)));}}catch(e){console.warn(e)}setTimeout(()=>{const u=new URL(location.href);u.searchParams.set('update',Date.now());location.replace(u.href)},250)};
-window.tfExportBackup=function(){try{const data={app:'TECNOFA Gestionale',version:32,exportedAt:new Date().toISOString(),data:{}};for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&key.startsWith('tf_')&&!['tf_session','tf_password_resets'].includes(key))data.data[key]=localStorage.getItem(key)}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');const d=new Date().toISOString().slice(0,10);a.href=url;a.download=`tecnofa-gestionale-backup-${d}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);const s=document.getElementById('tf-backup-status');if(s)s.textContent='Backup esportato correttamente.'}catch(e){console.error(e);const s=document.getElementById('tf-backup-status');if(s)s.textContent='Errore durante l’esportazione del backup.'}};
-window.tfImportBackup=function(input){const file=input?.files?.[0];if(!file)return;const s=document.getElementById('tf-backup-status');if(s)s.textContent='Lettura backup…';const reader=new FileReader();reader.onload=function(){try{const backup=JSON.parse(reader.result);if(!backup||backup.app!=='TECNOFA Gestionale'||!backup.data||typeof backup.data!=='object')throw new Error('Backup non valido');if(!confirm('Importando il backup i dati locali attuali del gestionale verranno sostituiti. Continuare?')){input.value='';if(s)s.textContent='Importazione annullata.';return}Object.keys(localStorage).filter(k=>k.startsWith('tf_')&&!['tf_session','tf_password_resets'].includes(k)).forEach(k=>localStorage.removeItem(k));Object.entries(backup.data).forEach(([key,value])=>{if(key.startsWith('tf_')&&!['tf_session','tf_password_resets'].includes(key))localStorage.setItem(key,String(value))});if(s)s.textContent='Backup importato. Ricaricamento…';setTimeout(()=>location.reload(),500)}catch(e){console.error(e);if(s)s.textContent='File non valido o backup danneggiato.';input.value=''}};reader.onerror=function(){if(s)s.textContent='Impossibile leggere il file.';input.value=''};reader.readAsText(file)};
-</script></body></html>
+window.settings=function(){
+  const u=window.tfCurrentUser?window.tfCurrentUser():null;
+  const name=u?.name||'Utente';
+  return `<div class="page-head"><div><div class="eyebrow">Sistema</div><h1>Impostazioni</h1><p>Controllo accesso, aggiornamento dell'applicazione, backup e sessione corrente.</p></div></div><div class="tf-settings-grid"><section class="tf-settings-card"><h2>Sessione</h2><p>Account attualmente collegato al gestionale.</p><div class="detail-card"><span>Utente</span><strong>${esc(name)}</strong></div><div class="tf-settings-actions" style="margin-top:12px"><button class="tf-danger-btn" onclick="if(confirm('Vuoi uscire dal gestionale?'))tfLogout()">↪ Esci dal gestionale</button><button class="ghost-btn" onclick="tfChangePassword()">Cambia password</button></div></section><section class="tf-settings-card"><h2>Aggiornamento applicazione</h2><p>Usa questo comando quando è stata pubblicata una nuova versione o quando l'app mostra una versione precedente.</p><div class="tf-settings-actions"><button class="primary" id="tf-force-update" onclick="tfForceUpdate()">↻ Aggiorna e svuota cache</button></div><div id="tf-update-status" class="tf-update-status"></div><div class="tf-settings-version">TECNOFA Gestionale · cache PWA v38</div></section><section class="tf-settings-card tf-backup-card"><h2>Backup dati</h2><p>Salva una copia locale di clienti, interventi, utenti, magazzino, archivi, impostazioni e dati del gestionale. La sessione corrente non viene esportata.</p><div class="tf-backup-actions"><button class="primary" onclick="tfExportBackup()">↓ Esporta backup</button><button class="ghost-btn" onclick="document.getElementById('tf-backup-file').click()">↑ Importa backup</button><input id="tf-backup-file" type="file" accept="application/json,.json" hidden onchange="tfImportBackup(this)"></div><div id="tf-backup-status" class="tf-update-status"></div><small class="tf-backup-note">Il backup contiene anche gli utenti e le loro impostazioni. Conservalo in un luogo sicuro.</small></div></section></div>`
+};
+window.tfForceUpdate=async function(){
+  const status=document.getElementById('tf-update-status'),btn=document.getElementById('tf-force-update');
+  if(btn)btn.disabled=true;if(status)status.textContent='Pulizia cache e aggiornamento in corso…';
+  try{if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));}if('caches' in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('tecnofa-')).map(k=>caches.delete(k)));}}catch(e){console.warn(e)}
+  setTimeout(()=>{const u=new URL(location.href);u.searchParams.set('update',Date.now());location.replace(u.href)},250)
+};
+window.tfExportBackup=function(){
+  try{const data={app:'TECNOFA Gestionale',version:38,exportedAt:new Date().toISOString(),data:{}};for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&key.startsWith('tf_')&&!['tf_session','tf_password_resets'].includes(key))data.data[key]=localStorage.getItem(key)}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');const d=new Date().toISOString().slice(0,10);a.href=url;a.download=`tecnofa-gestionale-backup-${d}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);const s=document.getElementById('tf-backup-status');if(s)s.textContent='Backup esportato correttamente.'}catch(e){console.error(e);const s=document.getElementById('tf-backup-status');if(s)s.textContent='Errore durante l’esportazione del backup.'}
+};
+window.tfImportBackup=function(input){
+  const file=input?.files?.[0];if(!file)return;const s=document.getElementById('tf-backup-status');if(s)s.textContent='Lettura backup…';const reader=new FileReader();
+  reader.onload=function(){try{const backup=JSON.parse(reader.result);if(!backup||backup.app!=='TECNOFA Gestionale'||!backup.data||typeof backup.data!=='object')throw new Error('Backup non valido');if(!confirm('Importando il backup i dati locali attuali del gestionale verranno sostituiti. Continuare?')){input.value='';if(s)s.textContent='Importazione annullata.';return}Object.keys(localStorage).filter(k=>k.startsWith('tf_')&&!['tf_session','tf_password_resets'].includes(k)).forEach(k=>localStorage.removeItem(k));Object.entries(backup.data).forEach(([key,value])=>{if(key.startsWith('tf_')&&!['tf_session','tf_password_resets'].includes(key))localStorage.setItem(key,String(value))});if(s)s.textContent='Backup importato. Ricaricamento…';setTimeout(()=>location.reload(),500)}catch(e){console.error(e);if(s)s.textContent='File non valido o backup danneggiato.';input.value=''}};
+  reader.onerror=function(){if(s)s.textContent='Impossibile leggere il file.';input.value=''};reader.readAsText(file)
+};
+
+// Registrazione esplicita PWA. Il funzionamento dell'app non dipende dal Service Worker.
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=20261011-38',{scope:'./'}).catch(e=>console.warn('TECNOFA PWA SW:',e)));
+}
+</script>
+</body>
+</html>
