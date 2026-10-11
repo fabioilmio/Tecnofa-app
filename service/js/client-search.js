@@ -1,0 +1,65 @@
+/* TECNOFA Gestionale — Ricerca clienti v1 */
+(function(){
+  const norm=v=>String(v??'').toLocaleLowerCase('it-IT').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const escSafe=v=>typeof esc==='function'?esc(v):String(v??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
+  const clients=()=>Array.isArray(state?.clients)?state.clients:[];
+  const clientText=c=>[c.name,c.fiscalCode,c.clientNumber,c.phone,c.city,c.fraction,c.address,c.cap,c.province,c.zone,c.plant,c.notes].map(norm).join(' ');
+  function find(q){
+    const needle=norm(q).trim();
+    if(!needle)return [];
+    return clients().filter(c=>clientText(c).includes(needle)).sort((a,b)=>norm(a.name).localeCompare(norm(b.name),'it')).slice(0,10);
+  }
+  function resultHtml(list,q){
+    if(!q.trim())return '<div class="tf-search-hint">Cerca per nome, codice cliente, codice fiscale, telefono, città o impianto.</div>';
+    if(!list.length)return '<div class="tf-search-empty">Nessun cliente trovato.</div>';
+    return list.map(c=>`<button type="button" class="tf-client-result" data-client-id="${escSafe(c.id)}"><span class="tf-client-result-main"><strong>${escSafe(c.name||'Cliente')}</strong><small>${escSafe([c.city,c.address].filter(Boolean).join(' · ')||'Sede non indicata')}</small></span><span class="tf-client-result-meta">${escSafe(c.clientNumber||c.fiscalCode||c.phone||'')}</span></button>`).join('');
+  }
+  function openGlobalSearch(){
+    document.querySelector('.tf-search-backdrop')?.remove();
+    const wrap=document.createElement('div');
+    wrap.className='modal-backdrop tf-search-backdrop';
+    wrap.innerHTML=`<div class="modal tf-global-search-modal" role="dialog" aria-modal="true" aria-labelledby="tf-search-title"><div class="tf-search-head"><div><div class="eyebrow">Ricerca rapida</div><h2 id="tf-search-title">Cerca cliente</h2><p>Trova subito una scheda anche se conosci solo una parte del nome o dell'indirizzo.</p></div><button type="button" class="icon-btn modal-close" aria-label="Chiudi">×</button></div><div class="tf-search-input-wrap"><span aria-hidden="true">⌕</span><input id="tf-global-client-search" type="search" autocomplete="off" placeholder="Nome, codice, telefono, città, impianto…"><kbd>Esc</kbd></div><div id="tf-global-search-results" class="tf-client-results">${resultHtml([], '')}</div></div>`;
+    document.body.appendChild(wrap);
+    const input=wrap.querySelector('#tf-global-client-search'),results=wrap.querySelector('#tf-global-search-results');
+    const update=()=>{results.innerHTML=resultHtml(find(input.value),input.value);results.querySelectorAll('[data-client-id]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.clientId;wrap.remove();if(typeof openClient==='function')openClient(id);}));};
+    input.addEventListener('input',update);
+    wrap.querySelector('.modal-close').onclick=()=>wrap.remove();
+    wrap.addEventListener('click',e=>{if(e.target===wrap)wrap.remove()});
+    input.focus();
+    document.addEventListener('keydown',function escHandler(e){if(e.key==='Escape'){wrap.remove();document.removeEventListener('keydown',escHandler)}},{once:false});
+  }
+  function enhanceClientSelect(select){
+    if(!select||select.dataset.tfClientSearch==='1')return;
+    select.dataset.tfClientSearch='1';
+    const holder=select.parentElement;
+    if(!holder)return;
+    const box=document.createElement('div');box.className='tf-inline-client-search';
+    box.innerHTML=`<div class="tf-inline-search-wrap"><span aria-hidden="true">⌕</span><input type="search" autocomplete="off" placeholder="Cerca cliente…"><button type="button" class="tf-inline-clear" aria-label="Azzera ricerca">×</button></div><div class="tf-inline-results" role="listbox"></div>`;
+    holder.insertBefore(box,select);select.style.display='none';
+    const input=box.querySelector('input'),list=box.querySelector('.tf-inline-results'),clear=box.querySelector('.tf-inline-clear');
+    const renderList=(q)=>{
+      const all=clients();
+      const matches=q.trim()?find(q):all.slice(0,8);
+      list.innerHTML=matches.length?matches.map(c=>`<button type="button" class="tf-inline-result" data-id="${escSafe(c.id)}"><strong>${escSafe(c.name||'Cliente')}</strong><small>${escSafe([c.city,c.address].filter(Boolean).join(' · ')||c.plant||'')}</small></button>`).join(''):'<div class="tf-inline-empty">Nessun cliente trovato.</div>';
+      list.querySelectorAll('[data-id]').forEach(btn=>btn.addEventListener('click',()=>{select.value=String(btn.dataset.id);input.value=btn.querySelector('strong')?.textContent||'';list.innerHTML=`<div class="tf-inline-selected">Cliente selezionato: <strong>${escSafe(input.value)}</strong></div>`;select.dispatchEvent(new Event('change',{bubbles:true}))}));
+    };
+    input.addEventListener('input',()=>renderList(input.value));
+    clear.addEventListener('click',()=>{input.value='';renderList('');input.focus()});
+    const selected=select.options[select.selectedIndex];
+    if(selected){input.value=selected.textContent.split(' — ')[0].trim();}
+    renderList('');
+  }
+  function enhanceAll(root=document){root.querySelectorAll('.modal-backdrop select#i-client,.modal-backdrop select#tf-q-client').forEach(enhanceClientSelect)}
+  function injectTopSearch(){
+    const top=document.querySelector('.top-actions');if(!top||document.getElementById('tf-global-search-btn'))return;
+    const b=document.createElement('button');b.type='button';b.id='tf-global-search-btn';b.className='tf-global-search-btn';b.setAttribute('aria-label','Cerca cliente');b.title='Cerca cliente (Ctrl/Cmd+K)';b.innerHTML='<span aria-hidden="true">⌕</span><span class="tf-global-search-label">Cerca</span>';
+    b.addEventListener('click',openGlobalSearch);top.insertBefore(b,top.firstChild);
+  }
+  window.tfOpenClientSearch=openGlobalSearch;
+  window.tfClientSearchFind=find;
+  injectTopSearch();
+  enhanceAll();
+  const observer=new MutationObserver(mutations=>mutations.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)enhanceAll(n)})));
+  observer.observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openGlobalSearch()}});
+})();
