@@ -8,6 +8,7 @@
   titles.users='Utenti e permessi';
   titles.permissions='Ruoli e permessi';
   titles.activity='Registro attività';
+  titles.plants='Impianti';
   function users(){try{const v=JSON.parse(localStorage.getItem('tf_users')||'[]');return Array.isArray(v)?v:[]}catch{return []}}
   function syncTechnicians(){
     let u=users();
@@ -26,11 +27,17 @@
   }
   window.tfNewTechnician=function(){if(typeof tfUserModal==='function')tfUserModal();setTimeout(()=>{const r=document.getElementById('u-role');if(r)r.value='TECNICO'},30)};
   window.tfEditUserFromTech=function(id){if(typeof tfUserModal==='function')tfUserModal(id)};
+  function loadPlants(){
+    if(typeof window.tfPlantsPage==='function'){window.tfPlantsPage();return;}
+    if(!document.getElementById('tf-impianti-css')){const l=document.createElement('link');l.id='tf-impianti-css';l.rel='stylesheet';l.href='css/impianti.css?v=20261011-42';document.head.appendChild(l)}
+    const s=document.createElement('script');s.src='js/impianti.js?v=20261011-42';s.onload=()=>window.tfPlantsPage&&window.tfPlantsPage();s.onerror=()=>{view.innerHTML='<div class="empty">Impossibile caricare il modulo Impianti. Riprova dopo aver aggiornato la pagina.</div>'};document.body.appendChild(s);
+  }
   const baseRender=window.render;
   window.tfNavigate=function(v){
     state.view=v;state.selected=null;title.textContent=titles[v]||'Dashboard';
     document.querySelectorAll('.nav-item[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v||((v==='permissions'||v==='activity'||v==='users')&&b.dataset.view==='administration')));
     if(v==='technicians')view.innerHTML=technicianPage();
+    else if(v==='plants')loadPlants();
     else if(v==='archivi'&&typeof window.archiviPage==='function')window.archiviPage();
     else if(v==='administration'&&typeof window.tfAdminPage==='function')view.innerHTML=window.tfAdminPage();
     else if(v==='users'&&typeof window.tfUsersPage==='function')view.innerHTML=window.tfUsersPage();
@@ -43,12 +50,13 @@
   document.querySelectorAll('.nav-item[data-view]').forEach(btn=>btn.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();tfNavigate(this.dataset.view)},true));
   window.render=()=>{
     if(state.view==='technicians')view.innerHTML=technicianPage();
+    else if(state.view==='plants')loadPlants();
     else if(state.view==='archivi'&&typeof window.archiviPage==='function')window.archiviPage();
     else if(state.view==='administration'&&typeof window.tfAdminPage==='function')view.innerHTML=tfAdminPage();
     else if(state.view==='users'&&typeof window.tfUsersPage==='function')view.innerHTML=tfUsersPage();
     else if(state.view==='permissions'&&typeof window.tfPermissionsPage==='function')view.innerHTML=tfPermissionsPage();
     else if(state.view==='activity'&&typeof window.tfActivityPage==='function')view.innerHTML=tfActivityPage();
-    else if(state.view==='dashboard'&&typeof window.tfDashboardPage==='function')view.innerHTML=window.tfDashboardPage();
+    else if(state.view==='dashboard'&&typeof window.tfDashboardPage==='function')view.innerHTML=tfDashboardPage();
     else baseRender();
   };
 })();
