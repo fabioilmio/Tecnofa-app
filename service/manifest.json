@@ -1,6 +1,6 @@
 {
-  "name": "TECNOFA Service",
-  "short_name": "TECNOFA Service",
+  "name": "TECNOFA Gestionale",
+  "short_name": "TECNOFA",
   "description": "Gestione tecnica di clienti, impianti e interventi.",
   "lang": "it-IT",
   "start_url": "./",
