@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#17352d">
   <meta name="description" content="TECNOFA Gestionale — gestione tecnica, magazzino e amministrazione.">
-  <link rel="manifest" href="manifest.json?v=20261011-20">
-  <link rel="stylesheet" href="css/style.css?v=20261011-20">
-  <link rel="stylesheet" href="css/agenda.css?v=20261011-20">
-  <link rel="stylesheet" href="css/warehouse.css?v=20261011-20">
-  <link rel="stylesheet" href="css/archivi.css?v=20261011-20">
-  <link rel="stylesheet" href="css/admin.css?v=20261011-20">
-  <link rel="stylesheet" href="css/auth.css?v=20261011-20">
+  <link rel="manifest" href="manifest.json?v=20261011-21">
+  <link rel="stylesheet" href="css/style.css?v=20261011-21">
+  <link rel="stylesheet" href="css/agenda.css?v=20261011-21">
+  <link rel="stylesheet" href="css/warehouse.css?v=20261011-21">
+  <link rel="stylesheet" href="css/archivi.css?v=20261011-21">
+  <link rel="stylesheet" href="css/admin.css?v=20261011-21">
+  <link rel="stylesheet" href="css/auth.css?v=20261011-21">
   <style>
     .tf-settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.tf-settings-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow)}.tf-settings-card h2{margin:0 0 7px;font-size:17px}.tf-settings-card p{margin:0 0 16px;color:var(--muted);font-size:13px;line-height:1.5}.tf-settings-actions{display:grid;gap:10px}.tf-settings-actions button{width:100%;text-align:left}.tf-settings-version{margin-top:12px;padding:10px 12px;border-radius:9px;background:var(--green-soft);color:var(--green-dark);font-size:12px}.tf-danger-btn{border:1px solid #efd3d0;background:#fff;color:#a43c35;border-radius:9px;padding:10px 13px;font-weight:750}.tf-update-status{min-height:18px;margin-top:8px;color:var(--muted);font-size:11px}@media(max-width:760px){.tf-settings-grid{grid-template-columns:1fr}}
   </style>
@@ -38,25 +38,25 @@
     <main class="main"><header class="topbar"><button id="mobile-menu" class="icon-btn" aria-label="Apri menu">☰</button><div class="breadcrumb">TECNOFA Gestionale <span>/</span> <b id="page-title">Dashboard</b></div><div class="top-actions"><button id="install-btn" class="ghost-btn hidden">Installa app</button><div class="status-dot"><i></i> Sistema operativo</div></div></header><section id="view" class="content"></section></main>
   </div>
   <div id="toast" class="toast" role="status"></div>
-  <script src="js/app.js?v=20261011-20"></script>
-  <script src="js/agenda.js?v=20261011-20"></script>
-  <script src="js/navigation.js?v=20261011-20"></script>
-  <script src="js/warehouse.js?v=20261011-20"></script>
-  <script src="js/archivi.js?v=20261011-20"></script>
-  <script src="js/clienti.js?v=20261011-20"></script>
-  <script src="js/admin.js?v=20261011-20"></script>
-  <script src="js/admin_tables.js?v=20261011-20"></script>
-  <script src="js/pdf.js?v=20261011-20"></script>
-  <script src="js/pdf_reports.js?v=20261011-20"></script>
-  <script src="js/admin_pdf_config.js?v=20261011-20"></script>
-  <script src="js/admin_relations.js?v=20261011-20"></script>
-  <script src="js/calendar_overrides.js?v=20261011-20"></script>
-  <script src="js/auth.js?v=20261011-20"></script>
+  <script src="js/app.js?v=20261011-21"></script>
+  <script src="js/agenda.js?v=20261011-21"></script>
+  <script src="js/navigation.js?v=20261011-21"></script>
+  <script src="js/warehouse.js?v=20261011-21"></script>
+  <script src="js/archivi.js?v=20261011-21"></script>
+  <script src="js/clienti.js?v=20261011-21"></script>
+  <script src="js/admin.js?v=20261011-21"></script>
+  <script src="js/admin_tables.js?v=20261011-21"></script>
+  <script src="js/pdf.js?v=20261011-21"></script>
+  <script src="js/pdf_reports.js?v=20261011-21"></script>
+  <script src="js/admin_pdf_config.js?v=20261011-21"></script>
+  <script src="js/admin_relations.js?v=20261011-21"></script>
+  <script src="js/calendar_overrides.js?v=20261011-21"></script>
+  <script src="js/auth.js?v=20261011-21"></script>
   <script>
     window.settings=function(){
       const u=window.tfCurrentUser?window.tfCurrentUser():null;
       const name=u?.name||'Utente';
-      return `<div class="page-head"><div><div class="eyebrow">Sistema</div><h1>Impostazioni</h1><p>Controllo accesso, aggiornamento dell'applicazione e sessione corrente.</p></div></div><div class="tf-settings-grid"><section class="tf-settings-card"><h2>Sessione</h2><p>Account attualmente collegato al gestionale.</p><div class="detail-card"><span>Utente</span><strong>${esc(name)}</strong></div><div class="tf-settings-actions" style="margin-top:12px"><button class="tf-danger-btn" onclick="if(confirm('Vuoi uscire dal gestionale?'))tfLogout()">↪ Esci dal gestionale</button><button class="ghost-btn" onclick="tfChangePassword()">🔐 Cambia password</button></div></section><section class="tf-settings-card"><h2>Aggiornamento applicazione</h2><p>Usa questo comando quando è stata pubblicata una nuova versione o quando l'app sembra mostrare una versione precedente.</p><div class="tf-settings-actions"><button class="primary" id="tf-force-update" onclick="tfForceUpdate()">↻ Aggiorna e svuota cache</button></div><div id="tf-update-status" class="tf-update-status"></div><div class="tf-settings-version">TECNOFA Gestionale · cache PWA v20</div></section></div>`;
+      return `<div class="page-head"><div><div class="eyebrow">Sistema</div><h1>Impostazioni</h1><p>Controllo accesso, aggiornamento dell'applicazione e sessione corrente.</p></div></div><div class="tf-settings-grid"><section class="tf-settings-card"><h2>Sessione</h2><p>Account attualmente collegato al gestionale.</p><div class="detail-card"><span>Utente</span><strong>${esc(name)}</strong></div><div class="tf-settings-actions" style="margin-top:12px"><button class="tf-danger-btn" onclick="if(confirm('Vuoi uscire dal gestionale?'))tfLogout()">↪ Esci dal gestionale</button><button class="ghost-btn" onclick="tfChangePassword()">🔐 Cambia password</button></div></section><section class="tf-settings-card"><h2>Aggiornamento applicazione</h2><p>Usa questo comando quando è stata pubblicata una nuova versione o quando l'app sembra mostrare una versione precedente.</p><div class="tf-settings-actions"><button class="primary" id="tf-force-update" onclick="tfForceUpdate()">↻ Aggiorna e svuota cache</button></div><div id="tf-update-status" class="tf-update-status"></div><div class="tf-settings-version">TECNOFA Gestionale · cache PWA v21</div></section></div>`;
     };
     window.tfForceUpdate=async function(){
       const status=document.getElementById('tf-update-status'),btn=document.getElementById('tf-force-update');
