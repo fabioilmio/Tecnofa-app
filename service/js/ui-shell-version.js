@@ -1,9 +1,20 @@
 /* TECNOFA Gestionale — version label */
 (function(){
+  const VERSION='v2026.41';
+  function patchSettings(){
+    if(typeof window.settings==='function'&&!window.settings.__tfVersionPatched){
+      const old=window.settings;
+      const next=function(){return String(old()).replace(/cache PWA v\d+/g,'cache PWA '+VERSION.replace('v','v'));};
+      next.__tfVersionPatched=true;
+      window.settings=next;
+    }
+  }
   function boot(){
     const s=document.querySelector('.tf-sidebar-version');
-    if(s)s.innerHTML='<strong>v2026.41</strong>';
+    if(s)s.innerHTML='<strong>'+VERSION+'</strong>';
+    patchSettings();
+    setTimeout(patchSettings,0);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
-  else setTimeout(boot,0);
+  else boot();
 })();
