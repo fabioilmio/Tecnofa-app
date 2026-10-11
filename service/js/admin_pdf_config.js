@@ -1,0 +1,9 @@
+/* TECNOFA — configurazione Adobe PDF Services */
+(function(){
+  const read=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??f}catch(e){return f}};
+  const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+  const esc=s=>String(s??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
+  const base=window.tfAdminPage;
+  window.tfAdminPage=function(){const cfg=read('tf_admin_config',{companyName:'TECNOFA',currency:'EUR',adobeClientId:''});return base()+`<section class="panel" style="margin-top:18px"><div class="panel-head"><div><h2>Integrazione documenti PDF</h2><small>Adobe PDF Embed per visualizzare i documenti direttamente nel gestionale.</small></div><span class="badge">${cfg.adobeClientId?'CONFIGURATO':'DA CONFIGURARE'}</span></div><div class="form-grid"><div class="field"><label>Adobe PDF Embed Client ID</label><input id="admin-adobe-client" value="${esc(cfg.adobeClientId||'')}" placeholder="Client ID Adobe"></div><div class="field"><label>Stato</label><input value="${cfg.adobeClientId?'Client ID presente':'Nessun Client ID configurato'}" readonly></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="primary" onclick="tfSaveAdobeConfig()">Salva Client ID</button><button class="ghost-btn" onclick="tfAdobeTest()">Testa Adobe PDF</button></div><div class="field-help" style="margin-top:9px">Per la generazione e l'estrazione automatica dei PDF useremo Adobe PDF Services sul backend: le credenziali segrete non verranno mai salvate nel browser.</div></section>`};
+  window.tfSaveAdobeConfig=function(){const cfg=read('tf_admin_config',{});cfg.adobeClientId=document.getElementById('admin-adobe-client').value.trim();save('tf_admin_config',cfg);toast('Client ID Adobe salvato');tfNavigate('administration')};
+})();
