@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#17352d">
   <meta name="description" content="TECNOFA Gestionale — gestione tecnica di clienti, impianti e interventi.">
-  <link rel="manifest" href="manifest.json?v=20261011">
-  <link rel="stylesheet" href="css/style.css?v=20261011">
-  <link rel="stylesheet" href="css/agenda.css?v=20261011">
+  <link rel="manifest" href="manifest.json?v=20261011-2">
+  <link rel="stylesheet" href="css/style.css?v=20261011-2">
+  <link rel="stylesheet" href="css/agenda.css?v=20261011-2">
   <title>TECNOFA Gestionale</title>
 </head>
 <body>
@@ -23,6 +23,7 @@
         <button class="nav-item" data-view="clients"><span>♙</span> Clienti</button>
         <button class="nav-item" data-view="plants"><span>⌂</span> Impianti</button>
         <button class="nav-item" data-view="interventions"><span>✓</span> Interventi</button>
+        <button class="nav-item" data-view="technicians"><span>♟</span> Tecnici</button>
         <button class="nav-item" data-view="warehouse"><span>▦</span> Magazzino</button>
         <button class="nav-item" data-view="reports"><span>▤</span> Rapportini</button>
       </nav>
@@ -42,8 +43,22 @@
     </main>
   </div>
   <div id="toast" class="toast" role="status"></div>
-  <script src="js/app.js?v=20261011"></script>
-  <script src="js/agenda.js?v=20261011"></script>
-  <script>window.addEventListener('load',()=>{if(typeof render==='function')render();});</script>
+  <script src="js/app.js?v=20261011-2"></script>
+  <script src="js/agenda.js?v=20261011-2"></script>
+  <script>
+    /* TECNOFA — anagrafica tecnici del pilot */
+    state.technicians=(()=>{try{const v=JSON.parse(localStorage.getItem('tf_technicians'));return Array.isArray(v)&&v.length?v:['Fabio','Tecnico 01','Tecnico 02']}catch(e){return ['Fabio','Tecnico 01','Tecnico 02']}})();
+    localStorage.setItem('tf_technicians',JSON.stringify(state.technicians));
+    const _render=render;
+    const _setView=setView;
+    function technicians(){
+      return `<div class="page-head"><div><div class="eyebrow">Squadra tecnica</div><h1>Tecnici</h1><p>Gestisci i tecnici disponibili per la programmazione in Agenda.</p></div><button class="primary" onclick="addTechnician()">+ Nuovo tecnico</button></div><section class="panel"><div class="panel-head"><h2>Tecnici disponibili</h2><span class="badge">${state.technicians.length}</span></div><div class="job-list">${state.technicians.map((t,i)=>`<div class="job-card"><div class="avatar">${esc(t).charAt(0).toUpperCase()}</div><div><strong>${esc(t)}</strong><small>Tecnico operativo · disponibile in Agenda</small></div><button class="panel-link" onclick="removeTechnician(${i})">Rimuovi</button></div>`).join('')}</div></section>`;
+    }
+    function addTechnician(){const name=prompt('Nome del tecnico:');if(!name||!name.trim())return;const n=name.trim();if(state.technicians.includes(n)){toast('Tecnico già presente');return;}state.technicians.push(n);localStorage.setItem('tf_technicians',JSON.stringify(state.technicians));toast('Tecnico aggiunto');render();}
+    function removeTechnician(i){if(state.technicians.length<=1){toast('Deve rimanere almeno un tecnico');return;}const name=state.technicians[i];if(!confirm(`Rimuovere ${name} dall’elenco dei tecnici?`))return;state.technicians.splice(i,1);localStorage.setItem('tf_technicians',JSON.stringify(state.technicians));toast('Tecnico rimosso');render();}
+    function render(){if(state.view==='technicians'){title.textContent='Tecnici';document.querySelectorAll('.nav-item[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view==='technicians'));view.innerHTML=technicians();window.scrollTo({top:0,behavior:'smooth'});return;}_render();}
+    document.querySelector('.nav-item[data-view="technicians"]').addEventListener('click',()=>{state.view='technicians';state.selected=null;render();document.querySelector('.sidebar')?.classList.remove('open');});
+    window.addEventListener('load',()=>{render();});
+  </script>
 </body>
 </html>
