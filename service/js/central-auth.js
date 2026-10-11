@@ -1,10 +1,11 @@
 /* TECNOFA Gestionale — bridge verso autenticazione D1.
-   Mantiene il modello UI esistente durante la migrazione: D1 è la fonte autorevole,
-   localStorage viene usato solo come cache compatibile temporanea. */
+   D1 è la fonte autorevole; localStorage resta solo una cache UI temporanea. */
 (function(){
   'use strict';
   const USERS='tf_users', SESSION='tf_session';
   let centralReady=false;
+  let resolveCentral;
+  const centralPromise=new Promise(resolve=>{resolveCentral=resolve});
   const read=(k,f)=>{try{const v=JSON.parse(localStorage.getItem(k));return v??f}catch{return f}};
   const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
   const localLogin=window.tfLogin;
@@ -12,6 +13,14 @@
   const localUsers=window.tfUsers;
   const localSaveUser=window.tfSaveUser;
   const localChangePassword=window.tfChangePassword;
+
+  /* Blocca la gara tra login locale e login D1 durante il bootstrap. */
+  window.tfCentralAuthPromise=centralPromise;
+  window.tfLogin=async function(){
+    const useCentral=await centralPromise;
+    if(useCentral && typeof window.tfCentralLogin==='function')return window.tfCentralLogin();
+    if(typeof localLogin==='function')return localLogin();
+  };
 
   function mirrorUser(u){
     const users=Array.isArray(read(USERS,[]))?read(USERS,[]):[];
@@ -48,12 +57,15 @@
       location.reload();
     }catch(e){console.error(e);if(msg)msg.textContent='Servizio di accesso temporaneamente non disponibile.';}
   }
+  window.tfCentralLogin=centralLogin;
   window.tfCentralAuthReady=()=>centralReady;
 
   async function boot(){
     const h=await health();
-    if(!h)return;
+    if(!h){resolveCentral(false);return;}
     centralReady=true;
+    /* D1 è disponibile: da questo momento il login locale non è consentito. */
+    resolveCentral(true);
     try{
       const r=await fetch('./api/auth/me',{credentials:'same-origin',cache:'no-store'});
       if(r.ok){const j=await r.json();if(j.ok)mirrorUser(j.user);}
