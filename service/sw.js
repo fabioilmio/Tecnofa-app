@@ -1,4 +1,4 @@
-const CACHE='tecnofa-gestionale-v31';
+const CACHE='tecnofa-gestionale-v32';
 const ASSETS=['./','./index.html','./css/style.css','./css/dashboard.css','./css/client-ui.css','./css/agenda.css','./css/warehouse.css','./css/archivi.css','./css/admin.css','./css/auth.css','./css/client-search.css','./js/app.js','./js/dashboard.js','./js/agenda.js','./js/agenda-dnd.js','./js/navigation.js','./js/warehouse.js','./js/archivi.js','./js/clienti.js','./js/client_ui.js','./js/admin.js','./js/admin_tables.js','./js/admin_ui.js','./js/pdf.js','./js/pdf_reports.js','./js/admin_pdf_config.js','./js/admin_relations.js','./js/calendar_overrides.js','./js/auth.js','./js/client-search.js','./js/manifest.json'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('tecnofa-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
