@@ -6,5 +6,5 @@
   function options(id,label){const el=document.getElementById(id);if(!el||el.tagName!=='INPUT')return;const old=el.value;const select=document.createElement('select');select.id=id;const opts=label==='cliente'?read('tf_clients',[]):read('tf_admin_fornitori',[]);select.innerHTML='<option value="">Seleziona</option>'+opts.map(x=>{const v=label==='cliente'?x.name:x.ragione;return `<option value="${esc(v)}">${esc(v)}</option>`}).join('');select.value=old;el.replaceWith(select)}
   window.tfAdminEdit=function(k,rowId){oldEdit(k,rowId);setTimeout(()=>{options('adm-cliente','cliente');options('adm-fornitore','fornitore');const c=document.getElementById('adm-controparte');if(c&&c.tagName==='INPUT'){const old=c.value;const all=[...read('tf_clients',[]).map(x=>x.name),...read('tf_admin_fornitori',[]).map(x=>x.ragione)];const s=document.createElement('select');s.id='adm-controparte';s.innerHTML='<option value="">Seleziona</option>'+all.filter(Boolean).map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');s.value=old;c.replaceWith(s)}},0)};
 })();
-/* admin-d1-fix.js exists in the repository but must be loaded by the current shell. document.write keeps loading synchronous during HTML parsing. */
-document.write('<script src="js/admin-d1-fix.js?v=20261012-57"><\\/script>');
+/* Load the D1 user-management bridge synchronously during HTML parsing. */
+document.write('<scr'+'ipt src="js/admin-d1-fix.js?v=20261012-57"></scr'+'ipt>');
