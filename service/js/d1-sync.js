@@ -1,34 +1,10 @@
 /* TECNOFA Gestionale — bridge operativo D1 → stato UI legacy */
 (function(){
-  'use strict';
-  const api=async(url,opts={})=>{const r=await fetch(url,{credentials:'same-origin',cache:'no-store',...opts});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`HTTP ${r.status}`);return d};
-  const clientMap=c=>({id:c.id,code:c.code,name:c.name,phone:c.phone||'',email:c.email||'',city:c.municipality||'',frazione:c.district||'',address:c.address||'',cap:c.postal_code||'',province:c.province||'',zone:c.area||'',plant:c.main_plant_id||'',main_plant_id:c.main_plant_id||null,notes:c.notes||'',attachments:[]});
-  const intMap=i=>({id:i.id,code:i.code,date:i.scheduled_date||'',time:i.scheduled_time||'',clientId:i.client_id,client:i.client||'',clientCode:i.client_code||'',plantId:i.plant_id||'',type:i.activity_type||'Intervento',tech:i.tech||'Non assegnato',techId:i.tech_id||'',status:i.status||'BOZZA',diagnosis:i.diagnosis||'',work:i.work_done||'',measurements:i.technician_notes||'',notes:i.outcome||i.notes||'',hours:Number(i.hours||0),km:Number(i.km||0),materials:[],photos:[],signature:''});
-  async function load(){
-    try{
-      const [c,i,u]=await Promise.all([api('/api/clients'),api('/api/interventions'),api('/api/users')]);
-      state.clients=(c.clients||[]).map(clientMap);
-      state.interventions=(i.interventions||[]).map(intMap);
-      const techs=(u.users||[]).filter(x=>x.role==='TECNICO'&&x.active!==false);
-      state.technicians=techs.map(x=>x.name);
-      localStorage.setItem('tf_users',JSON.stringify(u.users||[]));
-      localStorage.setItem('tf_clients',JSON.stringify(state.clients));
-      localStorage.setItem('tf_interventions',JSON.stringify(state.interventions));
-      window.tfD1Ready=true;
-      if(typeof render==='function')render();
-      return true;
-    }catch(e){console.warn('TECNOFA D1 sync:',e);window.tfD1Ready=false;return false}
-  }
-  async function syncLocal(){
-    try{
-      for(const c of (state.clients||[])) await api('/api/clients',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:c.id,code:c.code,name:c.name,fiscal_code:c.fiscal_code||'',phone:c.phone,email:c.email,municipality:c.city,district:c.frazione,address:c.address,postal_code:c.cap,province:c.province,area:c.zone,main_plant_id:c.main_plant_id||null,notes:c.notes||''})});
-      for(const j of (state.interventions||[])) await api('/api/interventions',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:j.id,client_id:j.clientId,plant_id:j.plantId||null,assigned_user_id:j.techId||null,activity_type:j.type,status:j.status,scheduled_date:j.date,scheduled_time:j.time,duration_minutes:j.duration||60,technician_notes:j.measurements||'',diagnosis:j.diagnosis||'',work_done:j.work||'',outcome:j.notes||'',hours:j.hours||0,km:j.km||0,total_amount:j.total_amount||0,notes:j.notes||''})});
-      return true;
-    }catch(e){console.warn('TECNOFA D1 write sync:',e);return false}
-  }
-  window.tfReloadD1=load;
-  window.tfSyncD1=syncLocal;
-  const oldSave=window.save;
-  window.save=function(){try{if(typeof oldSave==='function')oldSave();}catch{};syncLocal()};
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(load,150));
+'use strict';
+const api=async(url,opts={})=>{const r=await fetch(url,{credentials:'same-origin',cache:'no-store',...opts});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||`HTTP ${r.status}`);return d};
+const clientMap=c=>({id:c.id,code:c.code,name:c.name,phone:c.phone||'',email:c.email||'',city:c.municipality||'',frazione:c.district||'',address:c.address||'',cap:c.postal_code||'',province:c.province||'',zone:c.area||'',plant:c.main_plant_id||'',main_plant_id:c.main_plant_id||null,notes:c.notes||'',attachments:[]});
+const intMap=i=>({id:i.id,code:i.code,date:i.scheduled_date||'',time:i.scheduled_time||'',clientId:i.client_id,client:i.client||'',clientCode:i.client_code||'',plantId:i.plant_id||'',type:i.activity_type||'Intervento',tech:i.tech||'Non assegnato',techId:i.tech_id||'',status:i.status||'BOZZA',diagnosis:i.diagnosis||'',work:i.work_done||'',measurements:i.technician_notes||'',notes:i.outcome||i.notes||'',hours:Number(i.hours||0),km:Number(i.km||0),materials:[],photos:[],signature:''});
+async function load(){try{const [c,i,d]=await Promise.all([api('/api/clients'),api('/api/interventions'),api('/api/dashboard')]);state.clients=(c.clients||[]).map(clientMap);state.interventions=(i.interventions||[]).map(intMap);state.technicians=(d.technicians||[]).map(x=>x.name);localStorage.setItem('tf_clients',JSON.stringify(state.clients));localStorage.setItem('tf_interventions',JSON.stringify(state.interventions));localStorage.setItem('tf_technicians',JSON.stringify(state.technicians));window.tfD1Ready=true;if(typeof render==='function')render();return true}catch(e){console.warn('TECNOFA D1 sync:',e);window.tfD1Ready=false;return false}}
+async function syncLocal(){try{for(const c of(state.clients||[]))await api('/api/clients',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:c.id,code:c.code,name:c.name,fiscal_code:c.fiscal_code||'',phone:c.phone,email:c.email,municipality:c.city,district:c.frazione,address:c.address,postal_code:c.cap,province:c.province,area:c.zone,main_plant_id:c.main_plant_id||null,notes:c.notes||''})});for(const j of(state.interventions||[]))await api('/api/interventions',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:j.id,client_id:j.clientId,plant_id:j.plantId||null,assigned_user_id:j.techId||null,activity_type:j.type,status:j.status,scheduled_date:j.date,scheduled_time:j.time,duration_minutes:j.duration||60,technician_notes:j.measurements||'',diagnosis:j.diagnosis||'',work_done:j.work||'',outcome:j.notes||'',hours:j.hours||0,km:j.km||0,total_amount:j.total_amount||0,notes:j.notes||''})});return true}catch(e){console.warn('TECNOFA D1 write sync:',e);return false}}
+window.tfReloadD1=load;window.tfSyncD1=syncLocal;const oldSave=window.save;window.save=function(){try{if(typeof oldSave==='function')oldSave()}catch{};syncLocal()};document.addEventListener('DOMContentLoaded',()=>setTimeout(load,150));
 })();
