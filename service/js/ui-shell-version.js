@@ -1,10 +1,10 @@
 /* TECNOFA Gestionale — version label */
 (function(){
-  const VERSION='v2026.41';
+  const VERSION='v2026.42';
   function patchSettings(){
     if(typeof window.settings==='function'&&!window.settings.__tfVersionPatched){
       const old=window.settings;
-      const next=function(){return String(old()).replace(/cache PWA v\d+/g,'cache PWA '+VERSION.replace('v','v'));};
+      const next=function(){return String(old()).replace(/cache PWA v\d+/g,'cache PWA v53');};
       next.__tfVersionPatched=true;
       window.settings=next;
     }
