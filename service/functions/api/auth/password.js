@@ -12,7 +12,7 @@ export async function onRequestPost({ request, env }) {
   const session = sid(request);
   if (!session) return json({ ok: false, error: 'UNAUTHENTICATED' }, 401);
   const me = await env.TECNOFA_DB.prepare(
-    `SELECT u.id FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.id=?1 AND s.expires_at>datetime('now') AND u.active=1 LIMIT 1`
+    `SELECT u.id FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.id=?1 AND datetime(s.expires_at)>datetime('now') AND u.active=1 LIMIT 1`
   ).bind(session).first();
   if (!me) return json({ ok: false, error: 'UNAUTHENTICATED' }, 401);
   const body = await request.json();
