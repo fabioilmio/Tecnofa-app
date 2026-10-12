@@ -1,0 +1,49 @@
+/* TECNOFA — utenti D1: corregge il disallineamento tra UI locale e autenticazione centrale */
+(function(){
+  'use strict';
+  const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const perms=['dashboard','agenda','clients','plants','interventions','technicians','warehouse','reports','administration','archives','settings','users'];
+  const labels={dashboard:'Dashboard',agenda:'Agenda',clients:'Clienti',plants:'Impianti',interventions:'Interventi',technicians:'Tecnici',warehouse:'Magazzino',reports:'Rapportini',administration:'Amministrazione',archives:'Archivi',settings:'Impostazioni',users:'Utenti'};
+  let cache=[];
+  async function api(url,options={}){
+    const r=await fetch(url,{credentials:'same-origin',cache:'no-store',headers:{'Content-Type':'application/json',...(options.headers||{})},...options});
+    let d={};try{d=await r.json()}catch{}
+    if(!r.ok||d.ok===false)throw new Error(d.error||('HTTP_'+r.status));
+    return d;
+  }
+  async function load(){const d=await api('/api/users');cache=d.users||[];return cache;}
+  function roleDefaults(role,p){
+    if(role==='AMMINISTRATORE')return 'manage';
+    if(role==='LETTURA')return 'view';
+    if(role==='TECNICO')return ['agenda','interventions','reports','clients','plants','warehouse'].includes(p)?'edit':'none';
+    if(role==='AMMINISTRAZIONE')return ['administration','clients','reports'].includes(p)?'edit':'none';
+    return 'none';
+  }
+  window.tfUsers=()=>cache;
+  window.tfUsersPage=function(){
+    view.innerHTML='<div class="page-head"><div><div class="eyebrow">Sicurezza</div><h1>Utenti e permessi</h1><p>Gli utenti sono gestiti centralmente in D1 e sono gli stessi account usati dal login.</p></div><button class="primary" id="tf-new-user">+ Nuovo utente</button></div><section class="panel"><div class="panel-head"><h2>Utenti</h2><span class="badge" id="tf-users-count">…</span></div><div id="tf-users-list"><div class="empty">Caricamento utenti dal database centrale…</div></div></section>';
+    document.getElementById('tf-new-user')?.addEventListener('click',()=>tfUserModal());
+    load().then(render).catch(e=>{document.getElementById('tf-users-list').innerHTML='<div class="empty">Impossibile leggere gli utenti D1: '+esc(e.message)+'</div>'});
+  };
+  function render(users=cache){
+    const c=document.getElementById('tf-users-count'),box=document.getElementById('tf-users-list');if(c)c.textContent=users.length;if(!box)return;
+    box.innerHTML=users.map(x=>`<div class="job-card"><div class="avatar">${esc(x.name).charAt(0).toUpperCase()}</div><div><strong>${esc(x.name)}</strong><small>${esc(x.username)} · ${esc(x.role)} · ${x.active?'Attivo':'Disattivato'}${x.email?' · '+esc(x.email):''}</small></div><div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap"><button class="panel-link" onclick="tfUserModal('${esc(x.id)}')">Modifica</button>${x.id!=='USR-ADMIN'?`<button class="panel-link" onclick="tfD1ResetPassword('${esc(x.id)}')">Reset password</button><button class="panel-link danger" onclick="tfD1ToggleUser('${esc(x.id)}')">${x.active?'Disattiva':'Riattiva'}</button>`:''}</div></div>`).join('')||'<div class="empty">Nessun utente presente.</div>';
+  }
+  window.tfUserModal=function(id){
+    const x=cache.find(a=>a.id===id)||{id:'',name:'',email:'',username:'',role:'TECNICO',active:true,permissions:{}};
+    const roleOpts=['AMMINISTRATORE','TECNICO','AMMINISTRAZIONE','LETTURA'].map(r=>`<option value="${r}" ${r===x.role?'selected':''}>${r}</option>`).join('');
+    const fields=perms.map(p=>`<div class="perm-row"><span>${labels[p]}</span><select id="perm-${p}"><option value="none">Nessuno</option><option value="view">Visualizza</option><option value="edit">Modifica</option><option value="manage">Gestisce</option></select></div>`).join('');
+    document.body.insertAdjacentHTML('beforeend',`<div class="modal-backdrop" onclick="if(event.target===this)this.remove()"><div class="modal modal-large"><h2>${id?'Modifica':'Nuovo'} utente</h2><div class="form-grid"><div class="field"><label>Nome e cognome *</label><input id="u-name" value="${esc(x.name)}"></div><div class="field"><label>Email</label><input id="u-email" type="email" value="${esc(x.email)}"></div><div class="field"><label>Username *</label><input id="u-username" value="${esc(x.username)}" autocapitalize="none"></div><div class="field"><label>Password ${id?'(vuoto = invariata)':'*'}</label><input id="u-password" type="password" autocomplete="new-password"></div><div class="field"><label>Ruolo</label><select id="u-role">${roleOpts}</select></div><div class="field"><label>Stato</label><select id="u-active"><option value="1" ${x.active?'selected':''}>Attivo</option><option value="0" ${!x.active?'selected':''}>Disattivato</option></select></div></div><h3 class="section-title">Autorizzazioni</h3><div class="perm-grid">${fields}</div><div class="modal-actions"><button class="ghost-btn" onclick="this.closest('.modal-backdrop').remove()">Annulla</button><button class="primary" onclick="tfSaveUser('${esc(id)}')">Salva utente</button></div></div></div>`);
+    perms.forEach(p=>{const el=document.getElementById('perm-'+p);if(el)el.value=x.permissions?.[p]||roleDefaults(x.role,p)});
+  };
+  window.tfSaveUser=async function(id){
+    const name=document.getElementById('u-name')?.value.trim(),username=document.getElementById('u-username')?.value.trim().toLowerCase(),email=document.getElementById('u-email')?.value.trim().toLowerCase(),password=document.getElementById('u-password')?.value||'',role=document.getElementById('u-role')?.value,active=document.getElementById('u-active')?.value==='1';
+    if(!name||!username){toast('Inserisci nome e username');return}
+    const permissions=Object.fromEntries(perms.map(p=>[p,document.getElementById('perm-'+p)?.value||'none']));
+    try{await api('/api/users',{method:'POST',body:JSON.stringify({id:id||undefined,name,username,email,role,active,permissions,...(password?{password}: {})})});document.querySelector('.modal-backdrop')?.remove();toast('Utente salvato nel database centrale');await load();tfUsersPage()}catch(e){const msg={USERNAME_OR_EMAIL_EXISTS:'Username o email già utilizzati.',PASSWORD_REQUIRED:'Inserisci una password.',PASSWORD_TOO_SHORT:'La password deve avere almeno 8 caratteri.'}[e.message]||('Errore salvataggio: '+e.message);toast(msg)}
+  };
+  window.tfD1ToggleUser=async function(id){const x=cache.find(a=>a.id===id);if(!x)return;if(!confirm(`${x.active?'Disattivare':'Riattivare'} l'utente "${x.name}"?`))return;try{await api('/api/users',{method:'POST',body:JSON.stringify({id,name:x.name,username:x.username,email:x.email,role:x.role,active:!x.active,permissions:x.permissions})});toast(x.active?'Utente disattivato':'Utente riattivato');await load();tfUsersPage()}catch(e){toast('Errore aggiornamento utente: '+e.message)}};
+  window.tfD1ResetPassword=async function(id){const x=cache.find(a=>a.id===id);if(!x)return;const p=prompt(`Nuova password temporanea per ${x.name}:\nMinimo 8 caratteri`);if(!p)return;if(p.length<8){toast('La password deve avere almeno 8 caratteri');return}if(!confirm('Impostare la nuova password?'))return;try{await api('/api/users',{method:'POST',body:JSON.stringify({id,name:x.name,username:x.username,email:x.email,role:x.role,active:x.active,permissions:x.permissions,password:p})});toast('Password aggiornata nel database D1');}catch(e){toast('Errore reset password: '+e.message)}};
+  const oldAdminNavigate=window.adminNavigate;
+  window.adminNavigate=function(v){if(v==='users'){state.view='users';state.selected=null;title.textContent='Utenti e permessi';document.querySelectorAll('.nav-item[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view==='administration'));tfUsersPage();return}return oldAdminNavigate?oldAdminNavigate(v):null};
+})();
