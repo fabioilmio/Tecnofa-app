@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#17352d">
 <meta name="description" content="TECNOFA Gestionale — gestione tecnica, magazzino e amministrazione.">
-<link rel="manifest" href="manifest.json?v=20261012-56">
-<link rel="stylesheet" href="css/style.css?v=20261012-56">
-<link rel="stylesheet" href="css/dashboard.css?v=20261012-56">
-<link rel="stylesheet" href="css/client-ui.css?v=20261012-56">
-<link rel="stylesheet" href="css/agenda.css?v=20261012-56">
-<link rel="stylesheet" href="css/warehouse.css?v=20261012-56">
-<link rel="stylesheet" href="css/archivi.css?v=20261012-56">
-<link rel="stylesheet" href="css/admin.css?v=20261012-56">
-<link rel="stylesheet" href="css/auth.css?v=20261012-56">
-<link rel="stylesheet" href="css/client-search.css?v=20261012-56">
+<link rel="manifest" href="manifest.json?v=20261012-57">
+<link rel="stylesheet" href="css/style.css?v=20261012-57">
+<link rel="stylesheet" href="css/dashboard.css?v=20261012-57">
+<link rel="stylesheet" href="css/client-ui.css?v=20261012-57">
+<link rel="stylesheet" href="css/agenda.css?v=20261012-57">
+<link rel="stylesheet" href="css/warehouse.css?v=20261012-57">
+<link rel="stylesheet" href="css/archivi.css?v=20261012-57">
+<link rel="stylesheet" href="css/admin.css?v=20261012-57">
+<link rel="stylesheet" href="css/auth.css?v=20261012-57">
+<link rel="stylesheet" href="css/client-search.css?v=20261012-57">
 <title>TECNOFA Gestionale</title>
 <style id="tf-preauth-gate">#app-shell{display:none!important;visibility:hidden!important}body.tf-auth-ready #app-shell{display:flex!important;visibility:visible!important}</style>
 </head>
@@ -25,22 +25,49 @@
     <nav id="main-nav" class="nav" aria-label="Navigazione principale">
       <div class="nav-section">Principale</div>
       <button class="nav-item active" data-view="dashboard" aria-label="Dashboard"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">Dashboard</span></button>
-      <button class="nav-item" data-view="agenda" aria-label="Agenda"><span class="nav-icon" aria-hidden="true">◷</span><span class="nav-label">Agenda</span></button>
-      <button class="nav-item" data-view="interventions" aria-label="Interventi"><span class="nav-icon" aria-hidden="true">✓</span><span class="nav-label">Interventi</span></button>
-      <div class="nav-section">Anagrafiche</div>
-      <button class="nav-item" data-view="clients" aria-label="Clienti"><span class="nav-icon" aria-hidden="true">♙</span><span class="nav-label">Clienti</span></button>
-      <button class="nav-item" data-view="plants" aria-label="Impianti"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">Impianti</span></button>
-      <button class="nav-item" data-view="technicians" aria-label="Tecnici"><span class="nav-icon" aria-hidden="true">♟</span><span class="nav-label">Tecnici</span></button>
-      <div class="nav-section">Operatività</div>
-      <button class="nav-item" data-view="warehouse" aria-label="Magazzino"><span class="nav-icon" aria-hidden="true">▦</span><span class="nav-label">Magazzino</span></button>
-      <button class="nav-item" data-view="reports" aria-label="Rapportini"><span class="nav-icon" aria-hidden="true">▤</span><span class="nav-label">Rapportini</span></button>
-      <div class="nav-section">Azienda</div>
-      <button class="nav-item" data-view="administration" aria-label="Amministrazione"><span class="nav-icon" aria-hidden="true">€</span><span class="nav-label">Amministrazione</span></button>
-      <button class="nav-item" data-view="archivi" aria-label="Archivi"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-label">Archivi</span></button>
+
+      <div class="nav-group" data-group="agenda">
+        <button class="nav-section nav-section-toggle" type="button" aria-expanded="true"><span>Agenda</span><span class="nav-section-chevron">⌄</span></button>
+        <div class="nav-group-items">
+          <button class="nav-item" data-view="agenda" aria-label="Calendario"><span class="nav-icon" aria-hidden="true">◷</span><span class="nav-label">Calendario</span></button>
+          <button class="nav-item" data-view="interventions" aria-label="Interventi"><span class="nav-icon" aria-hidden="true">✓</span><span class="nav-label">Interventi</span></button>
+        </div>
+      </div>
+
+      <div class="nav-group" data-group="anagrafiche">
+        <button class="nav-section nav-section-toggle" type="button" aria-expanded="true"><span>Anagrafiche</span><span class="nav-section-chevron">⌄</span></button>
+        <div class="nav-group-items">
+          <button class="nav-item" data-view="clients" aria-label="Clienti"><span class="nav-icon" aria-hidden="true">♙</span><span class="nav-label">Clienti</span></button>
+          <button class="nav-item" data-view="plants" aria-label="Impianti"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">Impianti</span></button>
+          <button class="nav-item" data-view="technicians" aria-label="Tecnici"><span class="nav-icon" aria-hidden="true">♟</span><span class="nav-label">Tecnici</span></button>
+        </div>
+      </div>
+
+      <div class="nav-group" data-group="operativo">
+        <button class="nav-section nav-section-toggle" type="button" aria-expanded="true"><span>Operativo</span><span class="nav-section-chevron">⌄</span></button>
+        <div class="nav-group-items">
+          <button class="nav-item" data-view="warehouse" aria-label="Magazzino"><span class="nav-icon" aria-hidden="true">▦</span><span class="nav-label">Magazzino</span></button>
+          <button class="nav-item" data-view="reports" aria-label="Rapportini"><span class="nav-icon" aria-hidden="true">▤</span><span class="nav-label">Rapportini</span></button>
+        </div>
+      </div>
+
+      <div class="nav-group" data-group="azienda">
+        <button class="nav-section nav-section-toggle" type="button" aria-expanded="false"><span>Azienda</span><span class="nav-section-chevron">›</span></button>
+        <div class="nav-group-items is-collapsed">
+          <button class="nav-item" data-view="administration" aria-label="Amministrazione"><span class="nav-icon" aria-hidden="true">€</span><span class="nav-label">Amministrazione</span></button>
+          <button class="nav-item" data-view="archivi" aria-label="Archivi"><span class="nav-icon" aria-hidden="true">▤</span><span class="nav-label">Archivi</span></button>
+        </div>
+      </div>
+
+      <div class="nav-group" data-group="impostazioni">
+        <button class="nav-section nav-section-toggle" type="button" aria-expanded="false"><span>Impostazioni</span><span class="nav-section-chevron">›</span></button>
+        <div class="nav-group-items is-collapsed">
+          <button class="nav-item" data-view="settings" aria-label="Impostazioni sistema"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-label">Sistema e backup</span></button>
+        </div>
+      </div>
     </nav>
     <div class="sidebar-foot">
       <div class="user-mini"><div class="avatar">D</div><div><strong>Dervishaj Fatjon</strong><small>Amministratore</small></div></div>
-      <button class="nav-item" data-view="settings" aria-label="Impostazioni"><span class="nav-icon" aria-hidden="true">⚙</span><span class="nav-label">Impostazioni</span></button>
     </div>
   </aside>
   <main class="main">
@@ -53,43 +80,68 @@
   </main>
 </div>
 <div id="toast" class="toast" role="status"></div>
-<!-- Auth gate is loaded before every application module so its synchronous CSS gate exists before app bootstrap. -->
-<script src="js/auth.js?v=20261012-56"></script>
-<script src="js/app.js?v=20261012-56"></script>
-<script src="js/dashboard.js?v=20261012-56"></script>
-<script src="js/agenda.js?v=20261012-56"></script>
-<script src="js/navigation.js?v=20261012-56"></script>
-<script src="js/warehouse.js?v=20261012-56"></script>
-<script src="js/archivi.js?v=20261012-56"></script>
-<script src="js/clienti.js?v=20261012-56"></script>
-<script src="js/client_ui.js?v=20261012-56"></script>
-<script src="js/admin.js?v=20261012-56"></script>
-<script src="js/admin_tables.js?v=20261012-56"></script>
-<script src="js/admin_ui.js?v=20261012-56"></script>
-<script src="js/pdf.js?v=20261012-56"></script>
-<script src="js/pdf_reports.js?v=20261012-56"></script>
-<script src="js/admin_pdf_config.js?v=20261012-56"></script>
-<script src="js/admin_relations.js?v=20261012-56"></script>
-<script src="js/calendar_overrides.js?v=20261012-56"></script>
-<script src="js/team-sync.js?v=20261012-56"></script>
-<script src="js/client-search.js?v=20261012-56"></script>
-<script src="js/agenda-dnd.js?v=20261012-56"></script>
-<script src="js/data-protection.js?v=20261012-56"></script>
-<script src="js/data-protection-fix.js?v=20261012-56"></script>
-<script src="js/warehouse-v2.js?v=20261012-56"></script>
-<script src="js/warehouse-v2-fix.js?v=20261012-56"></script>
-<script src="js/ui-shell-v2.js?v=20261012-56"></script>
-<script src="js/ui-shell-version.js?v=20261012-56"></script>
-<script src="js/central-auth.js?v=20261012-56"></script>
-<script src="js/d1-sync.js?v=20261012-56"></script>
-<script src="js/agenda-plant-link.js?v=20261012-56"></script>
-<script src="js/intervention-report.js?v=20261012-56"></script>
+<script src="js/auth.js?v=20261012-57"></script>
+<script src="js/app.js?v=20261012-57"></script>
+<script src="js/dashboard.js?v=20261012-57"></script>
+<script src="js/agenda.js?v=20261012-57"></script>
+<script src="js/navigation.js?v=20261012-57"></script>
+<script src="js/warehouse.js?v=20261012-57"></script>
+<script src="js/archivi.js?v=20261012-57"></script>
+<script src="js/clienti.js?v=20261012-57"></script>
+<script src="js/client_ui.js?v=20261012-57"></script>
+<script src="js/admin.js?v=20261012-57"></script>
+<script src="js/admin_tables.js?v=20261012-57"></script>
+<script src="js/admin_ui.js?v=20261012-57"></script>
+<script src="js/pdf.js?v=20261012-57"></script>
+<script src="js/pdf_reports.js?v=20261012-57"></script>
+<script src="js/admin_pdf_config.js?v=20261012-57"></script>
+<script src="js/admin_relations.js?v=20261012-57"></script>
+<script src="js/calendar_overrides.js?v=20261012-57"></script>
+<script src="js/team-sync.js?v=20261012-57"></script>
+<script src="js/client-search.js?v=20261012-57"></script>
+<script src="js/agenda-dnd.js?v=20261012-57"></script>
+<script src="js/data-protection.js?v=20261012-57"></script>
+<script src="js/data-protection-fix.js?v=20261012-57"></script>
+<script src="js/warehouse-v2.js?v=20261012-57"></script>
+<script src="js/warehouse-v2-fix.js?v=20261012-57"></script>
+<script src="js/ui-shell-v2.js?v=20261012-57"></script>
+<script src="js/ui-shell-version.js?v=20261012-57"></script>
+<script src="js/central-auth.js?v=20261012-57"></script>
+<script src="js/d1-sync.js?v=20261012-57"></script>
+<script src="js/agenda-plant-link.js?v=20261012-57"></script>
+<script src="js/intervention-report.js?v=20261012-57"></script>
 <script>
-window.settings=function(){const u=window.tfCurrentUser?window.tfCurrentUser():null;const name=u?.name||'Utente';return `<div class="page-head"><div><div class="eyebrow">Sistema</div><h1>Impostazioni</h1><p>Controllo accesso, aggiornamento dell'applicazione, backup e sessione corrente.</p></div></div><div class="tf-settings-grid"><section class="tf-settings-card"><h2>Sessione</h2><p>Account attualmente collegato al gestionale.</p><div class="detail-card"><span>Utente</span><strong>${esc(name)}</strong></div><div class="tf-settings-actions" style="margin-top:12px"><button class="tf-danger-btn" onclick="if(confirm('Vuoi uscire dal gestionale?'))tfLogout()">↪ Esci dal gestionale</button><button class="ghost-btn" onclick="tfChangePassword()">Cambia password</button></div></section><section class="tf-settings-card"><h2>Aggiornamento applicazione</h2><p>Usa questo comando quando è stata pubblicata una nuova versione o quando l'app mostra una versione precedente.</p><div class="tf-settings-actions"><button class="primary" id="tf-force-update" onclick="tfForceUpdate()">↻ Aggiorna e svuota cache</button></div><div id="tf-update-status" class="tf-update-status"></div><div class="tf-settings-version">TECNOFA Gestionale · V52 · cache PWA v56 · autenticazione D1</div></section><section class="tf-settings-card tf-backup-card"><h2>Backup dati</h2><p>Salva una copia locale di clienti, interventi, utenti, magazzino, archivi, impostazioni e dati del gestionale. La sessione corrente non viene esportata.</p><div class="tf-backup-actions"><button class="primary" onclick="tfExportBackup()">↓ Esporta backup</button><button class="ghost-btn" onclick="document.getElementById('tf-backup-file').click()">↑ Importa backup</button><input id="tf-backup-file" type="file" accept="application/json,.json" hidden onchange="tfImportBackup(this)"></div><div id="tf-backup-status" class="tf-update-status"></div><small class="tf-backup-note">Il backup contiene anche gli utenti e le loro impostazioni. Conservalo in un luogo sicuro.</small></div></section></div>`};
+(function(){
+  function initNavGroups(){
+    document.querySelectorAll('.nav-section-toggle').forEach(btn=>{
+      if(btn.dataset.tfGroupBound==='1')return;
+      btn.dataset.tfGroupBound='1';
+      btn.addEventListener('click',()=>{
+        const group=btn.closest('.nav-group'); if(!group)return;
+        const items=group.querySelector('.nav-group-items'); if(!items)return;
+        const collapsed=items.classList.toggle('is-collapsed');
+        btn.setAttribute('aria-expanded',String(!collapsed));
+        const chev=btn.querySelector('.nav-section-chevron'); if(chev)chev.textContent=collapsed?'›':'⌄';
+      });
+    });
+    document.querySelectorAll('.nav-item[data-view]').forEach(btn=>{
+      if(btn.dataset.tfGroupAuto==='1')return;
+      btn.dataset.tfGroupAuto='1';
+      btn.addEventListener('click',()=>{
+        const group=btn.closest('.nav-group');
+        if(group){const items=group.querySelector('.nav-group-items');const head=group.querySelector('.nav-section-toggle');items?.classList.remove('is-collapsed');head?.setAttribute('aria-expanded','true');const chev=head?.querySelector('.nav-section-chevron');if(chev)chev.textContent='⌄';}
+        const sidebar=document.querySelector('.sidebar');const main=document.querySelector('.main');
+        if(sidebar?.classList.contains('tf-collapsed')&&!matchMedia('(max-width:760px)').matches){sidebar.classList.remove('tf-collapsed');main?.classList.remove('tf-main-collapsed');localStorage.setItem('tf_sidebar_collapsed','0');}
+      },true);
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(initNavGroups,0),{once:true});else setTimeout(initNavGroups,0);
+})();
+window.settings=function(){const u=window.tfCurrentUser?window.tfCurrentUser():null;const name=u?.name||'Utente';return `<div class="page-head"><div><div class="eyebrow">Sistema</div><h1>Impostazioni</h1><p>Controllo accesso, aggiornamento dell'applicazione, backup e sessione corrente.</p></div></div><div class="tf-settings-grid"><section class="tf-settings-card"><h2>Sessione</h2><p>Account attualmente collegato al gestionale.</p><div class="detail-card"><span>Utente</span><strong>${esc(name)}</strong></div><div class="tf-settings-actions" style="margin-top:12px"><button class="tf-danger-btn" onclick="if(confirm('Vuoi uscire dal gestionale?'))tfLogout()">↪ Esci dal gestionale</button><button class="ghost-btn" onclick="tfChangePassword()">Cambia password</button></div></section><section class="tf-settings-card"><h2>Aggiornamento applicazione</h2><p>Usa questo comando quando è stata pubblicata una nuova versione o quando l'app mostra una versione precedente.</p><div class="tf-settings-actions"><button class="primary" id="tf-force-update" onclick="tfForceUpdate()">↻ Aggiorna e svuota cache</button></div><div id="tf-update-status" class="tf-update-status"></div><div class="tf-settings-version">TECNOFA Gestionale · V53-LOCAL · cache PWA v58 · modalità locale · offline-first</div></section><section class="tf-settings-card tf-backup-card"><h2>Backup dati</h2><p>Salva una copia locale di clienti, interventi, utenti, magazzino, archivi, impostazioni e dati del gestionale. La sessione corrente non viene esportata.</p><div class="tf-backup-actions"><button class="primary" onclick="tfExportBackup()">↓ Esporta backup</button><button class="ghost-btn" onclick="document.getElementById('tf-backup-file').click()">↑ Importa backup</button><input id="tf-backup-file" type="file" accept="application/json,.json" hidden onchange="tfImportBackup(this)"></div><div id="tf-backup-status" class="tf-update-status"></div><small class="tf-backup-note">Il backup contiene anche gli utenti e le loro impostazioni. Conservalo in un luogo sicuro.</small></div></section></div>`};
 window.tfForceUpdate=async function(){const status=document.getElementById('tf-update-status'),btn=document.getElementById('tf-force-update');if(btn)btn.disabled=true;if(status)status.textContent='Pulizia cache e aggiornamento in corso…';try{if('serviceWorker'in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));}if('caches'in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('tecnofa-')).map(k=>caches.delete(k)));}}catch(e){console.warn(e)}setTimeout(()=>{const u=new URL(location.href);u.searchParams.set('update',Date.now());location.replace(u.href)},250)};
-window.tfExportBackup=function(){try{const data={app:'TECNOFA Gestionale',version:'V52',cache:'v56',exportedAt:new Date().toISOString(),data:{}};for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&key.startsWith('tf_')&&!['tf_session','tf_password_resets'].includes(key))data.data[key]=localStorage.getItem(key)}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');const d=new Date().toISOString().slice(0,10);a.href=url;a.download=`tecnofa-gestionale-backup-${d}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);const s=document.getElementById('tf-backup-status');if(s)s.textContent='Backup esportato correttamente.'}catch(e){console.error(e);const s=document.getElementById('tf-backup-status');if(s)s.textContent='Errore durante l’esportazione del backup.'}};
+window.tfExportBackup=function(){try{const data={app:'TECNOFA Gestionale',version:'V53-LOCAL',cache:'v58',exportedAt:new Date().toISOString(),data:{}};for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&key.startsWith('tf_')&&!['tf_session','tf_password_resets'].includes(key))data.data[key]=localStorage.getItem(key)}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');const d=new Date().toISOString().slice(0,10);a.href=url;a.download=`tecnofa-gestionale-backup-${d}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);const s=document.getElementById('tf-backup-status');if(s)s.textContent='Backup esportato correttamente.'}catch(e){console.error(e);const s=document.getElementById('tf-backup-status');if(s)s.textContent='Errore durante l’esportazione del backup.'}};
 window.tfImportBackup=function(input){const file=input?.files?.[0];if(!file)return;const s=document.getElementById('tf-backup-status');if(s)s.textContent='Lettura backup…';const reader=new FileReader();reader.onload=function(){try{const backup=JSON.parse(reader.result);if(!backup||backup.app!=='TECNOFA Gestionale'||!backup.data||typeof backup.data!=='object')throw new Error('Backup non valido');if(!confirm('Importando il backup i dati locali attuali del gestionale verranno sostituiti. Continuare?')){input.value='';if(s)s.textContent='Importazione annullata.';return}Object.keys(localStorage).filter(k=>k.startsWith('tf_')&&!['tf_session','tf_password_resets'].includes(k)).forEach(k=>localStorage.removeItem(k));Object.entries(backup.data).forEach(([key,value])=>{if(key.startsWith('tf_')&&!['tf_session','tf_password_resets'].includes(key))localStorage.setItem(key,String(value))});if(s)s.textContent='Backup importato. Ricaricamento…';setTimeout(()=>location.reload(),500)}catch(e){console.error(e);if(s)s.textContent='File non valido o backup danneggiato.';input.value=''}};reader.onerror=function(){if(s)s.textContent='Impossibile leggere il file.';input.value=''};reader.readAsText(file)};
-if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=20261012-56',{scope:'./'}).catch(e=>console.warn('TECNOFA PWA SW:',e)))}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=20261012-57',{scope:'./'}).catch(e=>console.warn('TECNOFA PWA SW:',e)))}
 </script>
 </body>
 </html>
