@@ -1,15 +1,26 @@
-/* TECNOFA Gestionale — local-first version label and sync bootstrap */
+/* TECNOFA Gestionale — unified application version and local-first UI bootstrap */
 (function(){
-  const VERSION='V53-LOCAL';
+  const VERSION='V2026.1.0.0';
+  const CACHE_VERSION='V2026.1.0.0';
+  const SYNC_BUILD='20261012-v2026.1.0.0';
+  window.TF_APP_VERSION=VERSION;
+  window.TF_CACHE_VERSION=CACHE_VERSION;
+  window.TF_SYNC_BUILD=SYNC_BUILD;
   function loadSync(){
     if(document.querySelector('script[data-tf-sync-engine]'))return;
-    const s=document.createElement('script');s.src='js/sync-engine.js?v=20261012-local1';s.dataset.tfSyncEngine='1';document.body.appendChild(s);
+    const s=document.createElement('script');s.src='js/sync-engine.js?v='+encodeURIComponent(SYNC_BUILD);s.dataset.tfSyncEngine='1';document.body.appendChild(s);
   }
   function patchSettings(){
     if(typeof window.settings==='function'&&!window.settings.__tfVersionPatched){
       const old=window.settings;
-      const next=function(){return String(old()).replace(/cache PWA v\d+/g,'cache PWA v58').replace(/autenticazione D1/g,'modalità locale · offline-first');};
-      next.__tfVersionPatched=true;window.settings=next;
+      const next=function(){
+        return String(old())
+          .replace(/V(?:\d+(?:\.\d+){2,3})(?:-[A-Z]+)?/g,VERSION)
+          .replace(/cache PWA v[^<\s·]+/g,'cache PWA '+CACHE_VERSION)
+          .replace(/autenticazione D1/g,'modalità locale · offline-first');
+      };
+      next.__tfVersionPatched=true;
+      window.settings=next;
     }
   }
   function sidebarUX(){
@@ -55,6 +66,13 @@
       @media(max-width:760px){.sidebar{width:270px}.sidebar.tf-collapsed{width:76px;transform:none}.sidebar.tf-collapsed~.main{margin-left:0;width:100%}.tf-sidebar-toggle{display:none}}
     `;document.head.appendChild(style);
   }
-  function boot(){const s=document.querySelector('.tf-sidebar-version');if(s)s.innerHTML='<strong>'+VERSION+'</strong>';patchSettings();loadSync();sidebarUX();setTimeout(patchSettings,0);}
+  function boot(){
+    const s=document.querySelector('.tf-sidebar-version');
+    if(s)s.innerHTML='<strong>'+VERSION+'</strong>';
+    patchSettings();
+    loadSync();
+    sidebarUX();
+    setTimeout(patchSettings,0);
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
