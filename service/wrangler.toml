@@ -1,8 +1,0 @@
-name = "tecnofa-gestionale"
-compatibility_date = "2026-10-12"
-pages_build_output_dir = "."
-
-[[d1_databases]]
-binding = "TECNOFA_DB"
-database_name = "tecnofa-gestionale-db"
-database_id = "c9ceb5ad-7681-42f3-adfc-b68236bc6fa2"
