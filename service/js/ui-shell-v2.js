@@ -1,7 +1,7 @@
 /* TECNOFA Gestionale — shell UI stable v5 */
 (function(){
   'use strict';
-  const KEY='tf_sidebar_collapsed', VERSION='v2026.42';
+  const KEY='tf_sidebar_collapsed', VERSION='V52';
   const icons={
     dashboard:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6v-9h-6v9Zm0-16v5h6V4h-6Z"/></svg>',
     agenda:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm7 7v4m0 0 3-2"/></svg>',
