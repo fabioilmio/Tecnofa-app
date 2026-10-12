@@ -1,6 +1,5 @@
 name = "tecnofa-gestionale"
 compatibility_date = "2026-10-11"
-pages_build_output_dir = "."
 
 [[d1_databases]]
 binding = "TECNOFA_DB"
