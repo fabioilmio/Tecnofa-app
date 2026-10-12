@@ -4,7 +4,7 @@
   function patchSettings(){
     if(typeof window.settings==='function'&&!window.settings.__tfVersionPatched){
       const old=window.settings;
-      const next=function(){return String(old()).replace(/cache PWA v\d+/g,'cache PWA v54');};
+      const next=function(){return String(old()).replace(/cache PWA v\d+/g,'cache PWA v55');};
       next.__tfVersionPatched=true;
       window.settings=next;
     }
