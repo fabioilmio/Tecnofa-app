@@ -20,6 +20,15 @@ window.tfQuickModal=function(date=new Date(),time='08:00',tech=''){
  client.addEventListener('change',refresh);
  api().then(refresh);
  const save=modal.querySelector('#tf-q-save');
- if(save){const old=save.onclick;save.onclick=async function(){await old?.call(this);const selected=select.value;const job=Array.isArray(state.interventions)?state.interventions[state.interventions.length-1]:null;if(selected&&job){job.plantId=selected;const p=(state.plants||[]).find(x=>String(x.id)===String(selected));if(p){job.plantType=p.type||'';job.plantBrand=p.brand||'';job.plantModel=p.model||''}if(typeof tfSyncD1==='function')await tfSyncD1();if(typeof tfReloadD1==='function')await tfReloadD1()}}}
+ if(save){const old=save.onclick;save.onclick=async function(){
+   const selected=select.value;
+   const arr=state.interventions;
+   const originalPush=arr.push;
+   arr.push=function(item){
+     if(selected){item.plantId=selected;const p=(state.plants||[]).find(x=>String(x.id)===String(selected));if(p){item.plantType=p.type||'';item.plantBrand=p.brand||'';item.plantModel=p.model||'';}}
+     return originalPush.call(this,item);
+   };
+   try{await old?.call(this)}finally{arr.push=originalPush}
+ }}
 };
 })();
