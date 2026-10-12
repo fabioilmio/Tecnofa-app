@@ -11,7 +11,7 @@ async function currentUser(request, env) {
   if (!sid) return null;
   return env.TECNOFA_DB.prepare(
     `SELECT u.id,u.role FROM sessions s JOIN users u ON u.id=s.user_id
-     WHERE s.id=?1 AND s.expires_at > datetime('now') AND u.active=1 LIMIT 1`
+     WHERE s.id=?1 AND datetime(s.expires_at) > datetime('now') AND u.active=1 LIMIT 1`
   ).bind(sid).first();
 }
 
