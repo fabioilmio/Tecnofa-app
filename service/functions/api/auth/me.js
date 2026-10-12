@@ -13,7 +13,7 @@ export async function onRequestGet({ request, env }) {
   const row = await env.TECNOFA_DB.prepare(
     `SELECT u.id,u.username,u.email,u.name,u.role,u.active,u.force_password_change,u.permissions_json
      FROM sessions s JOIN users u ON u.id=s.user_id
-     WHERE s.id=?1 AND s.expires_at > datetime('now') AND u.active=1 LIMIT 1`
+     WHERE s.id=?1 AND datetime(s.expires_at) > datetime('now') AND u.active=1 LIMIT 1`
   ).bind(sid).first();
   if (!row) return json({ ok: false, error: 'UNAUTHENTICATED' }, 401);
   let permissions = {};
