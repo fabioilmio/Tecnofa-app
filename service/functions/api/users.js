@@ -66,7 +66,9 @@ export async function onRequestPost({ request, env }) {
   if (!name || !username || !['AMMINISTRATORE','TECNICO','AMMINISTRAZIONE','LETTURA'].includes(role)) return json({ ok: false, error: 'INVALID_USER' }, 400);
 
   const existing = await env.TECNOFA_DB.prepare(`SELECT id,password_hash,force_password_change FROM users WHERE id=?1`).bind(id).first();
-  const duplicate = await env.TECNOFA_DB.prepare(`SELECT id FROM users WHERE (lower(username)=?1 OR lower(email)=?2) AND id<>?3 LIMIT 1`).bind(username, email, id).first();
+  const duplicate = email
+    ? await env.TECNOFA_DB.prepare(`SELECT id FROM users WHERE (lower(username)=?1 OR lower(email)=?2) AND id<>?3 LIMIT 1`).bind(username, email, id).first()
+    : await env.TECNOFA_DB.prepare(`SELECT id FROM users WHERE lower(username)=?1 AND id<>?2 LIMIT 1`).bind(username, id).first();
   if (duplicate) return json({ ok: false, error: 'USERNAME_OR_EMAIL_EXISTS' }, 409);
 
   let passwordHash = existing?.password_hash || '';
