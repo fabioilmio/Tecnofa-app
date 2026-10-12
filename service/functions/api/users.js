@@ -25,13 +25,16 @@ function publicUser(row) {
     role: row.role, active: Number(row.active) === 1,
     mustChangePassword: Number(row.force_password_change) === 1, permissions };
 }
+function canManageUsers(me) {
+  let permissions = {};
+  try { permissions = JSON.parse(me?.permissions_json || '{}'); } catch {}
+  return me?.role === 'AMMINISTRATORE' || permissions.users === 'manage';
+}
 
 export async function onRequestGet({ request, env }) {
   const me = await currentUser(request, env);
   if (!me) return json({ ok: false, error: 'UNAUTHENTICATED' }, 401);
-  let permissions = {};
-  try { permissions = JSON.parse(me.permissions_json || '{}'); } catch {}
-  if (me.role !== 'AMMINISTRATORE' && permissions.users !== 'manage') return json({ ok: false, error: 'FORBIDDEN' }, 403);
+  if (!canManageUsers(me)) return json({ ok: false, error: 'FORBIDDEN' }, 403);
   const rows = await env.TECNOFA_DB.prepare(`SELECT id,username,email,name,role,active,force_password_change,permissions_json FROM users ORDER BY name COLLATE NOCASE`).all();
   return json({ ok: true, users: (rows.results || []).map(publicUser) });
 }
@@ -39,12 +42,21 @@ export async function onRequestGet({ request, env }) {
 export async function onRequestPost({ request, env }) {
   const me = await currentUser(request, env);
   if (!me) return json({ ok: false, error: 'UNAUTHENTICATED' }, 401);
-  let mePermissions = {};
-  try { mePermissions = JSON.parse(me.permissions_json || '{}'); } catch {}
-  if (me.role !== 'AMMINISTRATORE' && mePermissions.users !== 'manage') return json({ ok: false, error: 'FORBIDDEN' }, 403);
+  if (!canManageUsers(me)) return json({ ok: false, error: 'FORBIDDEN' }, 403);
 
   const b = await request.json();
-  const id = String(b?.id || `USR-${Date.now().toString(36).toUpperCase()}`);
+  const requestedId = String(b?.id || '').trim();
+  if (b?.delete === true) {
+    if (!requestedId) return json({ ok: false, error: 'USER_ID_REQUIRED' }, 400);
+    if (requestedId === me.id) return json({ ok: false, error: 'CANNOT_DELETE_SELF' }, 400);
+    const target = await env.TECNOFA_DB.prepare(`SELECT id,username,role FROM users WHERE id=?1`).bind(requestedId).first();
+    if (!target) return json({ ok: false, error: 'USER_NOT_FOUND' }, 404);
+    if (target.username === 'admin' || target.role === 'AMMINISTRATORE') return json({ ok: false, error: 'PROTECTED_ADMIN' }, 400);
+    await env.TECNOFA_DB.prepare(`DELETE FROM users WHERE id=?1`).bind(requestedId).run();
+    return json({ ok: true, deletedId: requestedId });
+  }
+
+  const id = requestedId || `USR-${Date.now().toString(36).toUpperCase()}`;
   const name = String(b?.name || '').trim();
   const username = String(b?.username || '').trim().toLowerCase();
   const email = String(b?.email || '').trim().toLowerCase();
