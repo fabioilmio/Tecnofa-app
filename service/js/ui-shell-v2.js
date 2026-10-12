@@ -1,7 +1,7 @@
 /* TECNOFA Gestionale — shell UI stable v5 */
 (function(){
   'use strict';
-  const KEY='tf_sidebar_collapsed', VERSION='v2026.41';
+  const KEY='tf_sidebar_collapsed', VERSION='v2026.42';
   const icons={
     dashboard:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6v-9h-6v9Zm0-16v5h6V4h-6Z"/></svg>',
     agenda:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm7 7v4m0 0 3-2"/></svg>',
@@ -80,7 +80,7 @@
       else{const next=!sidebar.classList.contains('tf-collapsed');sidebar.classList.toggle('tf-collapsed',next);main.classList.toggle('tf-main-collapsed',next);localStorage.setItem(KEY,next?'1':'0');}
     };
     btn.__tfMenuHandler=handler;btn.addEventListener('click',handler,true);
-    sidebar.querySelectorAll('.nav-item[data-view]').forEach(b=>{if(b.dataset.tfCloseBound==='1')return;b.dataset.tfCloseBound='1';b.addEventListener('click',()=>{if(matchMedia('(max-width:760px)').matches)sidebar.classList.remove('open');});});
+    sidebar.querySelectorAll('.nav-item[data-view]').forEach(b=>{if(b.dataset.tfCloseBound==='1')return;b.dataset.tfCloseBound='1';b.addEventListener('click',()=>{if(matchMedia('(max-width:760px)').matches){sidebar.classList.remove('open');sidebar.classList.add('tf-collapsed');}});});
     let ver=sidebar.querySelector('.tf-sidebar-version');if(!ver){ver=document.createElement('div');ver.className='tf-sidebar-version';sidebar.querySelector('.sidebar-foot')?.appendChild(ver)||sidebar.appendChild(ver);}ver.innerHTML=`<strong>${VERSION}</strong>`;
   }
   function boot(){style();apply();window.addEventListener('resize',apply);}
