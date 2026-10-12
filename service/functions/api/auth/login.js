@@ -29,7 +29,7 @@ export async function onRequestPost({ request, env }) {
     const sessionId = crypto.randomUUID();
     const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
     await env.TECNOFA_DB.batch([
-      env.TECNOFA_DB.prepare(`DELETE FROM sessions WHERE user_id=?1 OR expires_at < datetime('now')`).bind(user.id),
+      env.TECNOFA_DB.prepare(`DELETE FROM sessions WHERE user_id=?1 OR datetime(expires_at) < datetime('now')`).bind(user.id),
       env.TECNOFA_DB.prepare(`INSERT INTO sessions(id,user_id,expires_at,last_seen_at) VALUES(?1,?2,?3,datetime('now'))`).bind(sessionId, user.id, expires),
       env.TECNOFA_DB.prepare(`UPDATE users SET last_login_at=datetime('now'), updated_at=datetime('now') WHERE id=?1`).bind(user.id)
     ]);
