@@ -3,5 +3,4 @@ const ASSETS=['./','./index.html','./css/style.css','./css/dashboard.css','./css
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('tecnofa-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(res=>{if(res.ok){const copy=res.clone();caches.open(CACHE).then(c=>c.put(e.request,copy)).catch(()=>{});}return res}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});
-/* Background Sync is optional because browser support varies. The application remains fully usable offline. */
 self.addEventListener('sync',event=>{if(event.tag!=='tecnofa-sync')return;event.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(clients=>clients.forEach(c=>c.postMessage({type:'TF_SYNC_REQUEST'}))).catch(()=>{}));});
